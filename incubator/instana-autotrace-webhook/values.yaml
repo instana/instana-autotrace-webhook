@@ -1,0 +1,37 @@
+# Default values for instana-autotrace-webhook.
+
+rbac:
+  enabled: false
+
+webhook:
+  debug: false
+  ssl:
+    insecure: false
+    caBundle:
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook:latest
+  imagePullPolicy: Always # Use Never for local development
+  imagePullCredentials:
+    registry: containers.instana.io
+    username: _
+    password:
+  replicas: 1
+
+autotrace:
+  # By default the instana-autotrace-webhook will instrument all pods that are not
+  # labelled with `instana-autotrace=false`. If this switch is flipped on,
+  # the instana-autotrace-webhook will only touch the pods that have the
+  # `instana-autotrace=true` label.
+  opt_in: false
+  failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
+  instrumentation:
+    image: instana/instrumentation:latest
+    imagePullPolicy: Always
+  nodejs:
+    enabled: true
+  netcore:
+    enabled: false # Not yet implemented
+  use_libinstana_init: false
+
+securityContext:
+  enabled: false
+  runAsUser: 1001 # If OpenShift, must be in the [1000580000, 1000589999] range

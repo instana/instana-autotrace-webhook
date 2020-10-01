@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+  {{- if ( include "is_openshift" . ) }}
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: instana-autotrace-webhook-certs
+  {{- end }}
+spec:
+  selector:
+    instana-autotrace-webhook: impl
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 8443

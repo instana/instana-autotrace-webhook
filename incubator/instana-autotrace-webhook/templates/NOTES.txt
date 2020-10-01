@@ -1,0 +1,9 @@
+The Instana Autotrace Webhook is installed.
+
+It will automatically instrument:
+{{- if .Values.autotrace.nodejs.enabled }}
+  - Node.js applications
+{{- end }}
+{{- if .Values.autotrace.netcore.enabled }}
+  - .NET Core applications
+{{- end }}

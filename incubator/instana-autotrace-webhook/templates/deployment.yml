@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: instana-autotrace-webhook
+  labels:
+    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.webhook.replicas }}
+  selector:
+    matchLabels:
+      {{- include "instana-autotrace-webhook.commonLabels" . | nindent 6 }}
+  template:
+    metadata:
+      name: instana-autotrace-webhook
+      labels:
+        {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
+        instana-autotrace-webhook: impl
+    spec:
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ .Release.Name }}
+      {{- end }}
+      {{- if .Values.securityContext.enabled }}
+      securityContext:
+        runAsUser: {{ required "When using 'securityContext.enabled=true', you must specify 'securityContext.runAsUser'" .Values.securityContext.runAsUser }}
+      {{- end }}
+      imagePullSecrets:
+      - name: containers-instana-io
+      containers:
+      - name: instana-autotrace-webhook
+        image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image }}
+        imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
+        env:
+        - name: INSTANA_INSTRUMENTATION_IMAGE
+          value: {{ .Values.autotrace.instrumentation.image | quote }}
+        - name: INSTANA_INSTRUMENTATION_IMAGE_PULL_POLICY
+          value: {{ .Values.autotrace.instrumentation.imagePullPolicy | quote }}
+        - name: INSTANA_AUTOTRACE_OPT_IN
+          value: {{ .Values.autotrace.opt_in | quote }}
+        - name: INSTANA_AUTOTRACE_NODEJS
+          value: {{ .Values.autotrace.nodejs.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_NETCORE
+          value: {{ .Values.autotrace.netcore.enabled | quote }}
+        {{- if .Values.autotrace.use_libinstana_init }}
+        - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
+          value: 'true'
+        {{- end }}
+        {{- if .Values.webhook.debug }}
+        - name: LOGGING_LEVEL_ROOT
+          value: DEBUG
+        {{- end }}
+        - name: JAVA_TOOL_OPTIONS
+        {{- if (and .Values.webhook.ssl.insecure .Values.webhook.debug) }}
+          value: '-Dcom.sun.net.ssl.checkRevocation=false -Djavax.net.debug=all'
+        {{- else if .Values.webhook.ssl.insecure }}
+          value: '-Dcom.sun.net.ssl.checkRevocation=false'
+        {{- else if .Values.webhook.debug }}
+          value: '-Djavax.net.debug=all'
+        {{- else }}
+          value: ''
+        {{- end }}
+        volumeMounts:
+          - name: certificates
+            mountPath: /app/certs
+        ports:
+        - containerPort: 8443
+      volumes:
+        - name: certificates
+          secret:
+            secretName: instana-autotrace-webhook-certs

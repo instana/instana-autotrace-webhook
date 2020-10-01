@@ -1,0 +1,39 @@
+apiVersion: admissionregistration.k8s.io/{{ include "k8s-admission-controller-api-version" . }}
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+    autotrace: instana-autotrace-webhook-impl
+  {{- if ( include "is_openshift" . ) }}
+  annotations:
+    service.beta.openshift.io/inject-cabundle: "true"
+  {{- end }}
+webhooks:
+- name: instana.autotrace.webhook
+{{- if (eq .Values.autotrace.opt_in true) }}
+  ### Object selector for opt-in.
+  objectSelector:
+    matchLabels:
+      "instana-autotrace": true
+{{- end }}
+  failurePolicy: {{ .Values.autotrace.failurePolicy }} # We do not want to cause any trouble in scheduling
+  reinvocationPolicy: IfNeeded # If some other mutating webhook adds containers or other stuff, we wanna get another go ;-)
+  matchPolicy: Equivalent
+  rules:
+  - apiGroups:   ['*']
+    apiVersions: ['v1']
+    operations:  ['CREATE', 'UPDATE']
+    resources:   ['pods']
+    # We will do filtering inside the Webhook, so that we can log which resources we ignore, and make troubleshooting easier
+    scope:       '*'
+  clientConfig:
+    service:
+      namespace: {{ .Release.Name }}
+      name: {{ .Release.Name }}
+      path: /validate
+      port: 443
+    caBundle: {{ .Values.webhook.ssl.caBundle }}
+  admissionReviewVersions: ['{{ include "k8s-admission-controller-api-version" . }}']
+  sideEffects: NoneOnDryRun
+  timeoutSeconds: 5

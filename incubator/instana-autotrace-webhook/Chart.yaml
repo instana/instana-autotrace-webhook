@@ -1,0 +1,21 @@
+apiVersion: v2
+
+#kubeVersion: ">1.17.0"
+
+name: instana-autotrace-webhook
+description: Helm chart to install Instana's Autotrace Webhook
+home: https://www.instana.com/
+icon: https://instana-management-assets.s3-eu-west-1.amazonaws.com/stan-logo-2020.png
+
+sources:
+- https://github.com/instana/instana-autotrace-webhook.git
+
+maintainers:
+- email: michele.mancioppi@instana.com
+  name: Michele Mancioppi
+
+type: application
+
+version: 1.0.0-SNAPSHOT
+
+appVersion: 0.0.1
