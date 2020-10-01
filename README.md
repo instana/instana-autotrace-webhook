@@ -4,13 +4,31 @@ This project provides a Kubernetes [admission controller mutating webhook](https
 
 ## Requirements
 
-- Kubernetes Cluster 1.17+ OR OpenShift 4.4+ (which is based on Kubernetes 1.17+)
-- `kubectl` 1.17+
+- Kubernetes Cluster 1.16+ OR OpenShift 4.x
+- `kubectl` 1.16+
 - Helm 3.2+ (to run tests, we use the `--create-namespace` flag)
 
 ## Setup
 
-### Helm 3
+### Openshift 4.x
+
+1. Create a project:
+
+   ```bash
+   oc create project instana-autotrace-webhook
+   ```
+
+2. Download the tarball with the latest and greates helm chart release from the Releases page.
+
+3. Installing the webhook by running the following command:
+
+   ```bash
+   helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
+     --set webhook.imagePullCredentials.password=<download_key> \
+     .
+   ```
+
+### Kubernetes
 
 Replace `<download_key>` in the following script with valid Instana download key and run it with administrator priviledges for your cluster:
 
@@ -24,6 +42,27 @@ helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
   --set webhook.ssl.caBundle="${CA_BUNDLE}" \
   helm/
 ```
+
+## Verify it works
+
+First of all, ensure the `instana-autotrace-webhook` in the `instana-autotrace-webhook` namespace is running as expected:
+
+```bash
+$ kubectl get pods -n instana-autotrace-webhook
+NAME                                         READY   STATUS    RESTARTS   AGE
+instana-autotrace-webhook-7c5d5bf6df-82w7c   1/1     Running   0          12m
+```
+
+Then time to try it out.
+Deploy a Node.js pod.
+When it comes up, you will see the following when checking the labels of the pod:
+
+```bash
+$ kubectl get pod test-nodejs -n test-apps -o=jsonpath='{.metadata.labels.instana-autotrace-applied}'
+true
+```
+
+Assuming that you _also_ installed the Host agent, e.g., using the `instana/agent` helm chart, the Node.js process will soon appear in your Instana dashboard.
 
 ## Configuration
 
