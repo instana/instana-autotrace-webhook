@@ -30,7 +30,8 @@ autotrace:
     enabled: true
   netcore:
     enabled: false # Not yet implemented
-  use_libinstana_init: false
+  libinstana_init:
+    enabled: false
 
 securityContext:
   enabled: false

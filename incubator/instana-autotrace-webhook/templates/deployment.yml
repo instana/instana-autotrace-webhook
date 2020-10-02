@@ -40,10 +40,8 @@ spec:
           value: {{ .Values.autotrace.nodejs.enabled | quote }}
         - name: INSTANA_AUTOTRACE_NETCORE
           value: {{ .Values.autotrace.netcore.enabled | quote }}
-        {{- if .Values.autotrace.use_libinstana_init }}
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
-          value: 'true'
-        {{- end }}
+          value: {{ .Values.autotrace.libinstana_init.enabled | quote }}
         {{- if .Values.webhook.debug }}
         - name: LOGGING_LEVEL_ROOT
           value: DEBUG
