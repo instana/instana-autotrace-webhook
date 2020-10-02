@@ -1,7 +1,5 @@
 apiVersion: v2
 
-#kubeVersion: ">1.17.0"
-
 name: instana-autotrace-webhook
 description: Helm chart to install Instana's Autotrace Webhook
 home: https://www.instana.com/
