@@ -20,13 +20,21 @@ webhooks:
   failurePolicy: {{ .Values.autotrace.failurePolicy }} # We do not want to cause any trouble in scheduling
   reinvocationPolicy: IfNeeded # If some other mutating webhook adds containers or other stuff, we wanna get another go ;-)
   matchPolicy: Equivalent
+  namespaceSelector:
+    matchExpressions:
+    - key: name
+      operator: NotIn
+      values:
+    {{- range $excludedNamespace := .Values.autotrace.namespaces.exclude }}
+      - {{ $excludedNamespace }}
+    {{- end }}
   rules:
-  - apiGroups:   ['*']
+  - apiGroups: ['*']
     apiVersions: ['v1']
-    operations:  ['CREATE', 'UPDATE']
-    resources:   ['pods']
-    # We will do filtering inside the Webhook, so that we can log which resources we ignore, and make troubleshooting easier
-    scope:       '*'
+    operations: ['CREATE', 'UPDATE']
+    resources: ['pods']
+    # Filter out system namespaces, and further filtering is done in the webhook
+    scope: 'Namespaced'
   clientConfig:
     service:
       namespace: {{ .Release.Name }}
