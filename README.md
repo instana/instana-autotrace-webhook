@@ -81,7 +81,7 @@ Irrespective of the value of `autotrace.opt-in`, the Autotrace Webhook will _not
 ### Pinning Instrumentation Versions
 
 The instrumentation is delivered into your containers via an `init-container` that uses, by default, the `latest` version of the `instana/instrumentation` image.
-You can however override this behavior by adding the `instana-instrumentation` label to your pods, and then the Autotrace Webhook will use the value of that label as `image` for the init container.
+You can however override this behavior by adding the `instana-instrumentation-image` label to your pods, and then the Autotrace Webhook will use the value of that label as `image` for the init container.
 The list of available versions of the `instana/instrumentation` is [available on DockerHub](https://hub.docker.com/v2/repositories/instana/instrumentation/tags).
 
 Additionally, you can override globally the default instrumentation image by setting the `autotrace.instrumentation.image` property when you deploy the Helm chart.
