@@ -30,6 +30,8 @@ spec:
         image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image }}
         imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
         env:
+        - name: IGNORED_NAMESPACES
+          value: {{ join "," .Values.autotrace.exclude.namespaces }}
         - name: INSTANA_INSTRUMENTATION_IMAGE
           value: {{ .Values.autotrace.instrumentation.image | quote }}
         - name: INSTANA_INSTRUMENTATION_IMAGE_PULL_POLICY

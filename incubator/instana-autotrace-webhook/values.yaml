@@ -33,13 +33,10 @@ autotrace:
   libinstana_init:
     enabled: false
   # Namespaces that are always ignored, no matter what
-  namespaces:
-    exclude:
-      - kube-node-lease
-      - kube-public
-      - kube-system
-      - openshift
-      # - openshift-* # We cannot match with wildcards
+  exclude:
+    namespaces:
+      - kube-* # kube-node-lease, kube-public, kube-system
+      - openshift-*
       - pks-system # TKGI, formerly known as PKS
 
 securityContext:
