@@ -1,6 +1,10 @@
 # Instana Autotrace Webhook
 
-This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Autotrace Webhook, that automatically configures the Instana tracing on Node.js applications running across the entire Kubernetes cluster.
+This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Autotrace Webhook, that automatically configures the Instana tracing for applications running across the entire Kubernetes cluster for the following runtimes:
+
+* Node.js
+* (Soon) .NET Core
+* (Soon) Proxies and Ingresses to be announced
 
 ## Requirements
 
