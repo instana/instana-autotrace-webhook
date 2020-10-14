@@ -29,9 +29,9 @@ autotrace:
   nodejs:
     enabled: true
   netcore:
-    enabled: false # Not yet implemented
+    enabled: true
   libinstana_init:
-    enabled: false
+    enabled: true
   # Namespaces that are always ignored, no matter what
   exclude:
     namespaces:
