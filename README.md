@@ -34,13 +34,13 @@ Replace `<download_key>` in the following script with valid Instana download key
 
 ```bash
 kubectl get namespace instana-autotrace-webhook > /dev/null 2>&1 || kubectl create namespace instana-autotrace-webhook
-./helm/scripts/webhook-create-signed-cert.sh --namespace instana-autotrace-webhook --service instana-autotrace-webhook --secret instana-autotrace-webhook-certs
+./incubator/instana-autotrace-webhook/scripts/webhook-create-signed-cert.sh --namespace instana-autotrace-webhook --service instana-autotrace-webhook --secret instana-autotrace-webhook-certs
 [ -n "$(kubectl config current-context)" ] || echo 'kubectl config current-context is not set!'
 export CA_BUNDLE="$(kubectl config view --raw --flatten -o json | jq -r '.clusters[] | select(.name == "'$(kubectl config current-context)'") | .cluster."certificate-authority-data"')"
 helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
   --set webhook.imagePullCredentials.password=<download_key> \
   --set webhook.ssl.caBundle="${CA_BUNDLE}" \
-  helm/
+  incubator/instana-autotrace-webhook/
 ```
 
 ## Verify it works
