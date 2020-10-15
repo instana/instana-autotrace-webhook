@@ -36,7 +36,8 @@ autotrace:
   exclude:
     namespaces:
       - kube-* # kube-node-lease, kube-public, kube-system
-      - openshift-*
+      - instana-* # Avoid conflicts with the Instana Agent and other Instana-related deployments
+      - openshift-* # Guess what, Openshift!
       - pks-system # TKGI, formerly known as PKS
 
 securityContext:
