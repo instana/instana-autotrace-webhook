@@ -1,24 +1,22 @@
 # Instana Autotrace Webhook
 
-This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Autotrace Webhook, that automatically configures the Instana tracing on Node.js applications running across the entire Kubernetes cluster.
+This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Instana Autotrace Webhook, that automatically configures the Instana tracing on Node.js and .NET Core applications (and soon more stuff :-) ) running across the entire Kubernetes cluster.
 
 ## Requirements
 
 - Kubernetes Cluster 1.16+ OR OpenShift 4.x
 - `kubectl` 1.16+
-- Helm 3.2+ (to run tests, we use the `--create-namespace` flag)
+- Helm 3.2+ (in the setup instructions, we use the new `--create-namespace` flag for maximum comfort)
 
 ## Setup
 
-1. Download the tarball with the latest and greates helm chart release from the Releases page.
+Replace `<download_key>` in the following script with valid Instana download key and run it with administrator priviledges for your cluster:
 
-2. Replace `<download_key>` in the following script with valid Instana download key and run it with administrator priviledges for your cluster:
-
-   ```bash
-   helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
-     --set webhook.imagePullCredentials.password=<download_key> \
-     .
-   ```
+```bash
+helm install --create-namespace --namespace instana-autotrace-webhook instana-autotrace-webhook \
+  --repo https://agents.instana.io/helm instana-autotrace-webhook \
+  --set webhook.imagePullCredentials.password=<download_key>
+```
 
 ## Verify it works
 
@@ -41,6 +39,11 @@ true
 
 Assuming that you _also_ installed the Host agent, e.g., using the `instana/agent` helm chart, the Node.js process will soon appear in your Instana dashboard.
 
+## Gotchas
+
+The Instana Autotrace Webhook will take effect on _new_ Kubernetes resources.
+That is, you may need to delete your Pods, ReplicaSets and Deployments and create them anew, for the Instana Autotrace Webhook to do its magic.
+
 ## Configuration
 
 ### Role-based Access Control
@@ -51,14 +54,6 @@ In order to deploy the Autotrace Webhook into a `ServiceAccount` guarded by a `C
 
 In purely Instana fashion, the Autotrace Webhook will instrument all containers in all pods.
 However, you may want to have more control over which pod is instrumented and which not.
-By setting the `autotrace.opt-in=true` property, the Autotrace Webhook will only modify pods that carry the `instana.autotrace: true` label.
+By setting the `autotrace.opt-in=true` value when deploying the Helm chart, the Autotrace Webhook will only modify pods that carry the `instana.autotrace: true` label.
 
-Irrespective of the value of `autotrace.opt-in`, the Autotrace Webhook will _not_ touch pods that carry the `instana.autotrace: false` label
-
-### Pinning Instrumentation Versions
-
-The instrumentation is delivered into your containers via an `init-container` that uses, by default, the `latest` version of the `instana/instrumentation` image.
-You can however override this behavior by adding the `instana-instrumentation-image` label to your pods, and then the Autotrace Webhook will use the value of that label as `image` for the init container.
-The list of available versions of the `instana/instrumentation` is [available on DockerHub](https://hub.docker.com/v2/repositories/instana/instrumentation/tags).
-
-Additionally, you can override globally the default instrumentation image by setting the `autotrace.instrumentation.image` property when you deploy the Helm chart.
+Irrespective of the value of the `autotrace.opt-in`, the Autotrace Webhook will _not_ touch pods that carry the `instana.autotrace: false` label
