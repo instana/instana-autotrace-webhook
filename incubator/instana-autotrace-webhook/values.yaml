@@ -2,20 +2,18 @@
 
 rbac:
   enabled: false
-
 webhook:
   debug: false
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook:latest
-  imagePullPolicy: Always # Use Never for local development
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:ec471b5b56cf1099a67e1668496d79cd9ea7c11393b3556805145b3cc0864bae
+  imagePullPolicy: Always
   imagePullCredentials:
     registry: containers.instana.io
     username: _
     password:
   replicas: 1
-
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
   # labelled with `instana-autotrace=false`. If this switch is flipped on,
@@ -24,8 +22,12 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation:latest
+    image: instana/instrumentation@sha256:35f63f2252e71919ac2cb662f4b439f02f48888d04ebdc3e4e9b92306153ac0f
     imagePullPolicy: Always
+  kong:
+    enabled: true
+  ingress_nginx:
+    enabled: true
   nodejs:
     enabled: true
   netcore:
@@ -39,7 +41,6 @@ autotrace:
       - instana-* # Avoid conflicts with the Instana Agent and other Instana-related deployments
       - openshift-* # Guess what, Openshift!
       - pks-system # TKGI, formerly known as PKS
-
 securityContext:
   enabled: false
   runAsUser: 1001 # If OpenShift, must be in the [1000580000, 1000589999] range
