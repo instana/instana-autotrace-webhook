@@ -4,7 +4,7 @@ This project provides a Kubernetes [admission controller mutating webhook](https
 
 ## Requirements
 
-- Kubernetes Cluster 1.16+ OR OpenShift 4.x
+- Kubernetes 1.17+ OR OpenShift 4.5
 - `kubectl` 1.16+
 - Helm 3.2+ (in the setup instructions, we use the new `--create-namespace` flag for maximum comfort)
 
@@ -55,8 +55,11 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 - The Instana Autotrace Webhook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets and Deployments and create them anew, for the Instana Autotrace Webhook to do its magic.
-- Autoprofile and colelcting some runtime metrics will only work on Node.js version 12.
+- Autoprofile and collecting some runtime metrics will only work on Node.js version 12.
   A future version of the Helm chart will deliver native modules for other supported Node.js versions.
+- Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
+  There is no known side-effect of this, don't get spooked :-)
+- Only `amd64` Kubernetes nodes are currently supported.
 
 ## Configuration
 
