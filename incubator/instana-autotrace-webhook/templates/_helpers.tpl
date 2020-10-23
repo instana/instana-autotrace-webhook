@@ -60,6 +60,15 @@ helm.sh/chart: {{ include "instana-autotrace-webhook.chart" . }}
 {{- end }}
 {{- end }}
 
+{{- define "admission-controller-api-versions" }}
+{{- if .Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1" }}
+- v1
+{{- end }}
+{{- if .Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1beta1" }}
+- v1beta1
+{{- end }}
+{{- end }}
+
 {{- define "is_openshift" }}
 {{- .Capabilities.APIVersions.Has "apps.openshift.io/v1" }}
 {{- end }}
