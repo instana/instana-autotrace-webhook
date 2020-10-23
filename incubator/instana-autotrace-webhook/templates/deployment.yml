@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.webhook.replicas }}
   selector:
     matchLabels:
-      {{- include "instana-autotrace-webhook.commonLabels" . | nindent 6 }}
+      app.kubernetes.io/instance: instana-autotrace-webhook
   template:
     metadata:
       name: instana-autotrace-webhook

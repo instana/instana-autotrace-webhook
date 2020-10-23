@@ -37,12 +37,26 @@ $ kubectl get pod test-nodejs -n test-apps -o=jsonpath='{.metadata.labels.instan
 true
 ```
 
-Assuming that you _also_ installed the Host agent, e.g., using the `instana/agent` helm chart, the Node.js process will soon appear in your Instana dashboard.
+Assuming that you _also_ installed the Instana host agent, e.g., using the `instana/agent` helm chart, the Node.js process will soon appear in your Instana dashboard.
+For more information, refer to the [Installing the Host Agent on Kubernetes](https://www.instana.com/docs/setup_and_manage/host_agent/on/kubernetes) documentation.
 
-## Gotchas
+## Updates
 
-The Instana Autotrace Webhook will take effect on _new_ Kubernetes resources.
-That is, you may need to delete your Pods, ReplicaSets and Deployments and create them anew, for the Instana Autotrace Webhook to do its magic.
+The Instana Autotrace Webhook does not currently have an automated way of upgrading the instrumentation it will install.
+The instrumentation is delivered over the [`instana/instrumentation` image](https://hub.docker.com/repository/docker/instana/instrumentation).
+The `instana-autotrace-webhook` Helm chart will be regularly updated to use the newest `instana/instrumentation` image; so, to update the instrumentation to the latest and greatest version, you can upgrade the deployment with:
+
+```bash
+helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
+  --repo https://agents.instana.io/helm instana-autotrace-webhook
+```
+
+## Gotchas and Known Limitations
+
+- The Instana Autotrace Webhook will take effect on _new_ Kubernetes resources.
+  That is, you may need to delete your Pods, ReplicaSets and Deployments and create them anew, for the Instana Autotrace Webhook to do its magic.
+- Autoprofile and colelcting some runtime metrics will only work on Node.js version 12.
+  A future version of the Helm chart will deliver native modules for other supported Node.js versions.
 
 ## Configuration
 
@@ -57,3 +71,9 @@ However, you may want to have more control over which pod is instrumented and wh
 By setting the `autotrace.opt-in=true` value when deploying the Helm chart, the Autotrace Webhook will only modify pods that carry the `instana.autotrace: true` label.
 
 Irrespective of the value of the `autotrace.opt-in`, the Autotrace Webhook will _not_ touch pods that carry the `instana.autotrace: false` label
+
+## Changelog
+
+### v0.5.0
+
+- Work towards support Helm chart upgrades to deliver new instrumentation, see the [Updates](#updates) section for more information.
