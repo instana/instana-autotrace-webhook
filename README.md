@@ -55,6 +55,7 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 - The Instana Autotrace Webhook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets and Deployments and create them anew, for the Instana Autotrace Webhook to do its magic.
+- The .NET Core SDK is not automatically installed by the AutoTrace webhook.
 - Autoprofile and collecting some runtime metrics will only work on Node.js version 12.
   A future version of the Helm chart will deliver native modules for other supported Node.js versions.
 - Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
@@ -67,6 +68,12 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 In order to deploy the Autotrace Webhook into a `ServiceAccount` guarded by a `ClusterRole` and matching `ClusterRoleBinding`, set the `rbac.enabled=true` flag when deploying the Helm chart.
 
+### Container port
+
+In order to be reachable from Kubernetes' API server, the Autotrace Webhook pod _must_ be hosted on the host network, and the deployment is configured to achieve that transparently.
+By default, the container will be bound to port `42650`.
+If something else on your nodes already uses port `42650`, causing the Autotrace Webhook to go in a crash loop because it finds its port already bound, you can change the port using the `webhook.port` property.
+
 ### Opt-in or opt-out
 
 In purely Instana fashion, the Autotrace Webhook will instrument all containers in all pods.
@@ -76,6 +83,19 @@ By setting the `autotrace.opt-in=true` value when deploying the Helm chart, the 
 Irrespective of the value of the `autotrace.opt-in`, the Autotrace Webhook will _not_ touch pods that carry the `instana.autotrace: false` label
 
 ## Changelog
+
+### 0.7.0
+
+- Improvement: Ensure the Autotrace Webhook port binds to the host network; Kubernetes' API Server would not be able to reach the Autotrace Webhook if it runs on top of a overlay networks
+- Improvement: Change default port for the Autotrace Webhook port from the `8443` to `42650` to reduce the likelihood of conflicts on the host network
+- Improvement: Introduced the `webhook.port` property to override the default value of `42650` for the Autotrace Webhook port
+- Improvement: Reduce chattiness of the `debug` mode to debug SSL (because certs are still the hardest thing in 2020)
+- Documentation: Document the limitation that the Autotrace Webhook does not currently ship the .NET Core SDK
+- Fix: Bind the service correctly if the namespace used is not the default `instana-autotrace-webhook`
+
+### v0.6.0
+
+- Ensure compatibility with GKE `1.16`
 
 ### v0.5.0
 

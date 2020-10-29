@@ -16,6 +16,7 @@ spec:
         {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
         instana-autotrace-webhook: impl
     spec:
+      hostNetwork: true # If a cluster uses an overlay network, we must ensure the pods run in the host network or the API server can't reach the webhook pod
       {{- if .Values.rbac.enabled }}
       serviceAccountName: {{ .Release.Name }}
       {{- end }}
@@ -30,6 +31,8 @@ spec:
         image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image }}
         imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
         env:
+        - name: SERVER_PORT
+          value: {{ .Values.webhook.port | quote }}
         - name: IGNORED_NAMESPACES
           value: {{ join "," .Values.autotrace.exclude.namespaces }}
         - name: INSTANA_INSTRUMENTATION_IMAGE
@@ -54,7 +57,7 @@ spec:
         {{- end }}
         - name: JAVA_TOOL_OPTIONS
         {{- if (and .Values.webhook.ssl.insecure .Values.webhook.debug) }}
-          value: '-Dcom.sun.net.ssl.checkRevocation=false -Djavax.net.debug=all'
+          value: '-Dcom.sun.net.ssl.checkRevocation=false -Djavax.net.debug=ssl,handshake'
         {{- else if .Values.webhook.ssl.insecure }}
           value: '-Dcom.sun.net.ssl.checkRevocation=false'
         {{- else if .Values.webhook.debug }}
@@ -66,7 +69,7 @@ spec:
           - name: certificates
             mountPath: /app/certs
         ports:
-        - containerPort: 8443
+        - containerPort: {{ .Values.webhook.port }}
       volumes:
         - name: certificates
           secret:
