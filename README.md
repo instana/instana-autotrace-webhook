@@ -84,7 +84,16 @@ Irrespective of the value of the `autotrace.opt-in`, the Autotrace Webhook will 
 
 ## Changelog
 
-### 0.7.0
+### v0.8.0
+
+- Fix: Fix an issue with containers running on Alpine or other Muslc-based environment, where a pod crash could be triggered by the following error:
+
+  ```log
+  Error relocating /opt/instana/instrumentation/libinstana_init/libinstana_init.so: __snprintf_chk: symbol not found
+  Error relocating /opt/instana/instrumentation/libinstana_init/libinstana_init.so: __vfprintf_chk: symbol not found
+  ```
+
+### v0.7.0
 
 - Improvement: Ensure the Autotrace Webhook port binds to the host network; Kubernetes' API Server would not be able to reach the Autotrace Webhook if it runs on top of a overlay networks
 - Improvement: Change default port for the Autotrace Webhook port from the `8443` to `42650` to reduce the likelihood of conflicts on the host network
