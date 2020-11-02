@@ -84,6 +84,14 @@ Irrespective of the value of the `autotrace.opt-in`, the Autotrace Webhook will 
 
 ## Changelog
 
+### v0.9.0
+
+- Fix: Fix an issue with containers running Node.js v8, where a pod crash could be triggered by the following error:
+
+  ```log
+  Error relocating /opt/instana/instrumentation/libinstana_init/libinstana_init.so: secure_getenv: symbol not found
+  ```
+
 ### v0.8.0
 
 - Fix: Fix an issue with containers running on Alpine or other Muslc-based environment, where a pod crash could be triggered by the following error:
