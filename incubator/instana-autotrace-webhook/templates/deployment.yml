@@ -4,6 +4,13 @@ metadata:
   name: instana-autotrace-webhook
   labels:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+    {{- if .Values.webhook.deployment.additionalLabels }}
+    {{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
+    {{- end }}
+  {{ if .Values.webhook.deployment.additionalAnnotations }}
+  annotations:
+    {{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.webhook.replicas }}
   selector:
@@ -13,10 +20,17 @@ spec:
     metadata:
       name: instana-autotrace-webhook
       labels:
+        {{- if .Values.webhook.pod.additionalLabels }}
+        {{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
+        {{- end }}
         {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
         instana-autotrace-webhook: impl
+      {{- if .Values.webhook.pod.additionalAnnotations }}
+      annotations:
+        {{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
+      {{- end }}
     spec:
-      hostNetwork: true # If a cluster uses an overlay network, we must ensure the pods run in the host network or the API server can't reach the webhook pod
+      hostNetwork: {{ .Values.webhook.pod.hostNetwork }}
       {{- if .Values.rbac.enabled }}
       serviceAccountName: {{ .Release.Name }}
       {{- end }}
@@ -31,8 +45,16 @@ spec:
         image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image }}
         imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
         env:
+        - name: WEBHOOK_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: WEBHOOK_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         - name: SERVER_PORT
-          value: {{ .Values.webhook.port | quote }}
+          value: {{ .Values.webhook.pod.port | quote }}
         - name: IGNORED_NAMESPACES
           value: {{ join "," .Values.autotrace.exclude.namespaces }}
         - name: INSTANA_INSTRUMENTATION_IMAGE
@@ -69,7 +91,15 @@ spec:
           - name: certificates
             mountPath: /app/certs
         ports:
-        - containerPort: {{ .Values.webhook.port }}
+        - containerPort: {{ .Values.webhook.pod.port }}
+      {{- if .Values.webhook.pod.tolerations }}
+      tolerations:
+        {{- toYaml .Values.webhook.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.webhook.affinity }}
+      affinity:
+        {{- toYaml .Values.webhook.affinity | nindent 8 }}
+      {{- end }}
       volumes:
         - name: certificates
           secret:

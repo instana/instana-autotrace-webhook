@@ -4,14 +4,18 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
-  {{- if ( include "is_openshift" . ) }}
+    {{- if .Values.webhook.service.additionalLabels }}
+    {{ toYaml .Values.webhook.service.additionalLabels | indent 6 }}
+    {{- end }}
   annotations:
-    service.beta.openshift.io/serving-cert-secret-name: instana-autotrace-webhook-certs
-  {{- end }}
+    {{- if .Values.webhook.service.additionalAnnotations }}
+    {{ toYaml .Values.webhook.service.additionalAnnotations | indent 4 }}
+    {{- end }}
 spec:
   selector:
     instana-autotrace-webhook: impl
   ports:
-    - protocol: TCP
-      port: 443
-      targetPort: {{ .Values.webhook.port }}
+    - name: https
+      protocol: TCP
+      port: {{ .Values.webhook.service.port }}
+      targetPort: {{ .Values.webhook.pod.port }}

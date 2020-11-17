@@ -8,6 +8,18 @@ icon: https://instana-management-assets.s3-eu-west-1.amazonaws.com/stan-logo-202
 sources:
 - https://github.com/instana/instana-autotrace-webhook.git
 
+annotations:
+  artifacthub.io/images: |
+    - name: Stan
+      image: https://agents.instana.io/helm/stan-logo-2020.png
+  artifacthub.io/links: |
+    - name: Instana website
+      url: https://www.instana.com
+    - name: Instana Helm charts
+      url: https://github.com/instana/helm-charts
+    - name: Instana Autotrace Webhook repository
+      url: https://github.com/instana/instana-autotrace-webhook
+
 maintainers:
 - email: michele.mancioppi@instana.com
   name: Michele Mancioppi

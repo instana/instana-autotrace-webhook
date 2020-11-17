@@ -7,14 +7,29 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  port: 42650
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:32f66045414a7ee5722d8e09b63ec5232f8fa1e7bee36756861ce4a55f6cd1c9
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:83424faeb7a4e14b3646c2e069a2be00b8e7d13c970d4d9585da78fc9f9079b2
   imagePullPolicy: Always
   imagePullCredentials:
     registry: containers.instana.io
     username: _
     password:
-  replicas: 1
+  deployment:
+    additionalAnnotations: {}
+    additionalLabels: {}
+    replicas: 1
+  service:
+    additionalAnnotations: {}
+    additionalLabels: {}
+    port: 42650
+  pod:
+    additionalAnnotations: {}
+    additionalLabels: {}
+    affinity: {}
+    tolerations: []
+    port: 42650
+    # Ensure that, in case of overlay networks, we bind to the host network, or the control plane
+    # won't be able to call into this webhook
+    hostNetwork: true
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
   # labelled with `instana-autotrace=false`. If this switch is flipped on,
@@ -23,7 +38,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:e5eb6ed41715d89cf570a8a73a58ecbd8a485fb0cd0c32fb95b0987b3d38404b
+    image: instana/instrumentation@sha256:64e627f0a6642e5e8dd25cdbf9bb163be85408b27903347220ec46d271d8920a
     imagePullPolicy: Always
   kong:
     enabled: true
