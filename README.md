@@ -66,8 +66,6 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 The following limitations need to be lifted before the Instana AutoTrace Webhook is declared Generally Available:
 
-- Autoprofile and collecting some runtime metrics will only work on Node.js version 12.
-  A future version of the Helm chart will deliver native modules for other supported Node.js versions.
 - Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
   There is no known side-effect of this, don't get spooked :-)
 
@@ -131,6 +129,15 @@ Another issue we have sporadically seen is that cryptography restrictions in ter
 In this case, please [open a ticket](https://support.instana.com) and tell us which cryptography algorithms your clusters support.
 
 ## Changelog
+
+### v0.12.0
+
+- Native addons for Node.js are now bundled for all support Node.js versions!
+- Update to the latest tracers
+
+### v0.11.0
+
+- Update to the latest tracers
 
 ### v0.10.0
 
