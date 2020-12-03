@@ -38,7 +38,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:f00be48427c7e3d4a9749c8df03a129262e5145948974442ee1347311fcd5edd
+    image: instana/instrumentation@sha256:384f4ee13206b2f55ba7dadedc0f57f9e13441b71ccddd17c6481de344f822d6
     imagePullPolicy: Always
   kong:
     enabled: true
