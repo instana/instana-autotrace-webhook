@@ -130,6 +130,22 @@ In this case, please [open a ticket](https://support.instana.com) and tell us wh
 
 ## Changelog
 
+### v0.16.0
+
+- Instrumentation updates
+
+### v0.15.0
+
+- Instrumentation updates
+
+### v0.14.0
+
+- Instrumentation updates
+
+### v0.13.0
+
+- Instrumentation updates
+
 ### v0.12.0
 
 - Native addons for Node.js are now bundled for all support Node.js versions!
