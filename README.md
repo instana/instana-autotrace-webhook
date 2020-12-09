@@ -92,6 +92,8 @@ By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the 
 
 Irrespective of the value of the `autotrace.opt_in`, the AutoTrace Webhook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
 
+The `instana-autotrace: "false"` label can is respected in metadata of DaemonSets, Deployments, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
+
 ## Troubleshooting
 
 If you do not see the Instana AutoTrace Webhook have effect on your _new_ Kubernetes resources, the steps to troubleshoot are the following.
@@ -132,6 +134,10 @@ Another issue we have sporadically seen is that cryptography restrictions in ter
 In this case, please [open a ticket](https://support.instana.com) and tell us which cryptography algorithms your clusters support.
 
 ## Changelog
+
+### v0.18.0
+
+- Improvement: Support the `instana-autotrace` label also in metadata of DaemonSets, Deployments, ReplicaSets, and StatefulSets.
 
 ### v0.17.0
 
