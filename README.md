@@ -64,10 +64,13 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 ## Limitations
 
-The following limitations need to be lifted before the Instana AutoTrace Webhook is declared Generally Available:
+The following limitations need to be lifted before the Instana AutoTrace Webhook enters Beta:
 
+- Support for PodSecurityPolicies and Security Context for both the WebHook pod and the Instrumentation image.
 - Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
   There is no known side-effect of this, don't get spooked :-)
+
+From Beta to General Availability, we expect it to be only about ironing bugs, should they come up.
 
 ## Configuration
 
@@ -84,10 +87,10 @@ If something else on your nodes already uses port `42650`, causing the AutoTrace
 ### Opt-in or opt-out
 
 In purely Instana fashion, the AutoTrace Webhook will instrument all containers in all pods.
-However, you may want to have more control over which pod is instrumented and which not.
-By setting the `autotrace.opt-in=true` value when deploying the Helm chart, the AutoTrace Webhook will only modify pods that carry the `instana.autotrace: true` label.
+However, you may want to have more control over which resources are instrumented and which not.
+By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the AutoTrace Webhook will only modify pods, replica sets, stateful sets, daemon sets and deployments that carry the `instana-autotrace: "true"` label.
 
-Irrespective of the value of the `autotrace.opt-in`, the AutoTrace Webhook will _not_ touch pods that carry the `instana.autotrace: false` label
+Irrespective of the value of the `autotrace.opt_in`, the AutoTrace Webhook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
 
 ## Troubleshooting
 
@@ -130,6 +133,10 @@ In this case, please [open a ticket](https://support.instana.com) and tell us wh
 
 ## Changelog
 
+### v0.17.0
+
+- Fix: Correct documentation and coding issues with `autotrace.opt_in`
+
 ### v0.16.0
 
 - Instrumentation updates
@@ -139,10 +146,6 @@ In this case, please [open a ticket](https://support.instana.com) and tell us wh
 - Instrumentation updates
 
 ### v0.14.0
-
-- Instrumentation updates
-
-### v0.13.0
 
 - Instrumentation updates
 

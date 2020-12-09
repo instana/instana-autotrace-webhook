@@ -42,7 +42,7 @@ spec:
       - name: containers-instana-io
       containers:
       - name: instana-autotrace-webhook
-        image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image }}
+        image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image | quote }}
         imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
         env:
         - name: WEBHOOK_POD_NAMESPACE
