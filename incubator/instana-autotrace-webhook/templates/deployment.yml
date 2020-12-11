@@ -7,7 +7,7 @@ metadata:
     {{- if .Values.webhook.deployment.additionalLabels }}
     {{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
     {{- end }}
-  {{ if .Values.webhook.deployment.additionalAnnotations }}
+  {{- if .Values.webhook.deployment.additionalAnnotations }}
   annotations:
     {{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
   {{- end }}
@@ -34,9 +34,9 @@ spec:
       {{- if .Values.rbac.enabled }}
       serviceAccountName: {{ .Release.Name }}
       {{- end }}
-      {{- if .Values.securityContext.enabled }}
       securityContext:
-        runAsUser: {{ required "When using 'securityContext.enabled=true', you must specify 'securityContext.runAsUser'" .Values.securityContext.runAsUser }}
+      {{- if .Values.webhook.pod.securityContext }}
+{{ toYaml .Values.webhook.pod.securityContext | indent 8 }}
       {{- end }}
       imagePullSecrets:
       - name: containers-instana-io
@@ -44,6 +44,12 @@ spec:
       - name: instana-autotrace-webhook
         image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image | quote }}
         imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
+        securityContext:
+          privileged: false
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - all
         env:
         - name: WEBHOOK_POD_NAMESPACE
           valueFrom:
@@ -57,9 +63,13 @@ spec:
           value: {{ .Values.webhook.pod.port | quote }}
         - name: IGNORED_NAMESPACES
           value: {{ join "," .Values.autotrace.exclude.namespaces }}
-        - name: INSTANA_INSTRUMENTATION_IMAGE
+        {{- if .Values.autotrace.instrumentation.securityContext }}
+        - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_SECURITY_CONTEXT
+          value: {{ toJson .Values.autotrace.instrumentation.securityContext | default "{}" | quote }}
+        {{- end }}
+        - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
           value: {{ .Values.autotrace.instrumentation.image | quote }}
-        - name: INSTANA_INSTRUMENTATION_IMAGE_PULL_POLICY
+        - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
           value: {{ .Values.autotrace.instrumentation.imagePullPolicy | quote }}
         - name: INSTANA_AUTOTRACE_OPT_IN
           value: {{ .Values.autotrace.opt_in | quote }}

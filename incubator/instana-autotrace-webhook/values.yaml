@@ -2,12 +2,14 @@
 
 rbac:
   enabled: false
+  psp: # Ignored unless rbac.enabled == true
+    enabled: true
 webhook:
   debug: false
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:a175ac0e25c6427779a74235496363e2617b9ad4c22b12f2b3b38aaa1f5e6d3e
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:3602ebef2942dc93dc0659eba85c07be3240ecd108d364644e030d13c0ca7ffa
   imagePullPolicy: Always
   imagePullCredentials:
     registry: containers.instana.io
@@ -30,6 +32,8 @@ webhook:
     # Ensure that, in case of overlay networks, we bind to the host network, or the control plane
     # won't be able to call into this webhook
     hostNetwork: true
+    # This security context is carried verbatim to the security context of the webhook pod
+    securityContext:
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
   # labelled with `instana-autotrace=false`. If this switch is flipped on,
@@ -40,6 +44,13 @@ autotrace:
   instrumentation:
     image: instana/instrumentation@sha256:f815b7f721a817b116a8e0cac94d9795a992fe9fc6b5c824e9e06defb3abfe03
     imagePullPolicy: Always
+    # This security context is carried verbatim to the security context of all instrumentation init containers
+    securityContext:
+      privileged: false
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
   kong:
     enabled: true
   ingress_nginx:
@@ -57,6 +68,3 @@ autotrace:
       - instana-* # Avoid conflicts with the Instana Agent and other Instana-related deployments
       - openshift-* # Guess what, Openshift!
       - pks-system # TKGI, formerly known as PKS
-securityContext:
-  enabled: false
-  runAsUser: 1001 # If OpenShift, must be in the [1000580000, 1000589999] range

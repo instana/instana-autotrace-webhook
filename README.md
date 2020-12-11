@@ -135,6 +135,11 @@ In this case, please [open a ticket](https://support.instana.com) and tell us wh
 
 ## Changelog
 
+### v0.19.0
+
+- Improvement: Allow to specify `securityContext` for the webhook pod and the instrumentation init containers, using the `webhook.pod.securityContext` and `autotrace.instrumentation.webhook`, respectively.
+- Deprecation: The `securityContext.runAsUser` setting has been removed, and you can achieve the same effect via the `webhook.securityContext.runAsUser` setting.
+
 ### v0.18.0
 
 - Improvement: Support the `instana-autotrace` label also in metadata of DaemonSets, Deployments, ReplicaSets, and StatefulSets.
