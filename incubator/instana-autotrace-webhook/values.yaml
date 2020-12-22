@@ -9,7 +9,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:3602ebef2942dc93dc0659eba85c07be3240ecd108d364644e030d13c0ca7ffa
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:9c33204f44c27e09221204fc340b65eed06585cc95a2edecff6f77694e77795f
   imagePullPolicy: Always
   imagePullCredentials:
     registry: containers.instana.io
@@ -42,7 +42,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:ec831e569131483dcbd60ae34dad6bbd9c08a82285e9197f5a4aa18808e55fa9
+    image: instana/instrumentation@sha256:6667f405e1d22b9f9f2f0646aa82bea81dca1be9429f3455ec06b2ede7b8cd0e
     imagePullPolicy: Always
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
