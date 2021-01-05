@@ -1,7 +1,7 @@
 apiVersion: v2
 
 name: instana-autotrace-webhook
-description: Helm chart to install Instana's Autotrace Webhook
+description: Helm chart to install Instana's AutoTrace WebHook
 home: https://www.instana.com/
 icon: https://instana-management-assets.s3-eu-west-1.amazonaws.com/stan-logo-2020.png
 
@@ -17,7 +17,7 @@ annotations:
       url: https://www.instana.com
     - name: Instana Helm charts
       url: https://github.com/instana/helm-charts
-    - name: Instana Autotrace Webhook repository
+    - name: Instana AutoTrace WebHook repository
       url: https://github.com/instana/instana-autotrace-webhook
 
 maintainers:

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.191.6
+
+- Support OpenShift's DeploymentConfig object
+
 ## 1.191.5
 
 - Update the @instana/collector Node.js package to 1.110.5

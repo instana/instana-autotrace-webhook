@@ -1,4 +1,4 @@
-The Instana Autotrace Webhook is installed.
+The Instana AutoTrace WebHook is installed.
 
 It will automatically instrument:
 {{- if .Values.autotrace.nodejs.enabled }}
