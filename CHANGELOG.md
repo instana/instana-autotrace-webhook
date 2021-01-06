@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.191.7
+
+- Update the .NET Core dependencies to 1.191.18
+
 ## 1.191.6
 
 - Support OpenShift's DeploymentConfig object
