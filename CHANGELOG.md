@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.192.1
+
+- Add memory and cpu limits and requests to instrumentation containers
+
 ## 1.192.0
 
 - Update the .NET Core dependencies to 1.192.2
