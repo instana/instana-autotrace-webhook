@@ -9,7 +9,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:6b5ed55d326495bb70a0aaf156a6d29e00044f29b764654a37300b88a5aecff0
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:5395db6bc47f1bf3067974007321e92a13c8e74ff46a879b6df70aa107e40b4a
   imagePullPolicy: Always
   imagePullCredentials:
     registry: containers.instana.io
@@ -34,6 +34,13 @@ webhook:
     hostNetwork: true
     # This security context is carried verbatim to the security context of the webhook pod
     securityContext:
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: 0.5
+      limits:
+        memory: "512Mi"
+        cpu: 1.0
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
   # labelled with `instana-autotrace=false`. If this switch is flipped on,
@@ -42,7 +49,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:fd308dee8f25f7a19b525824c17bf9c1690e5115d9dbff77e8451354d860e321
+    image: instana/instrumentation@sha256:751dff4045eee89d6d11093a9b9ac7661a62e06d456ba2edeb1da70250b1d9bd
     imagePullPolicy: Always
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:

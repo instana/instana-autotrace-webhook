@@ -66,7 +66,7 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 The following limitations need to be lifted before the Instana AutoTrace WebHook enters Beta:
 
-- Support for PodSecurityPolicies and Security Context for both the WebHook pod and the Instrumentation image.
+- Validate in the field the support for PodSecurityPolicies and Security Context for both the WebHook pod and the Instrumentation image.
 - Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
   There is no known side-effect of this, don't get spooked :-)
 

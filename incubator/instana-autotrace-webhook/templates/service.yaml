@@ -13,7 +13,7 @@ metadata:
     {{- end }}
 spec:
   selector:
-    instana-autotrace-webhook: impl
+    app.kubernetes.io/instance: instana-autotrace-webhook
   ports:
     - name: https
       protocol: TCP

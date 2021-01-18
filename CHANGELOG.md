@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.192.2
+
+- Reduce amount of added labels
+- Improvements to WebHook logs
+- Introduce readiness and liveness probes for the WebHook
+- Update the .NET Core dependencies to 1.192.3
+- BugFix: Fix webhook upgrade deadlock on small clusters
+- BugFix: Fix issue with ignored objects on edit
+- Update the @instana/collector Node.js package to 1.111.1
+
 ## 1.192.1
 
 - Add memory and cpu limits and requests to instrumentation containers

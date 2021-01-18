@@ -16,6 +16,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/instance: instana-autotrace-webhook
+  strategy:
+    # Since we bind to the host network, a rolling update on small clusters may deadlock,
+    # with new pods not able to start because the network port is taken, and old pods remaining
+    # around until the new ones are up
+    type: Recreate
   template:
     metadata:
       name: instana-autotrace-webhook
@@ -24,7 +29,7 @@ spec:
         {{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
         {{- end }}
         {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
-        instana-autotrace-webhook: impl
+        instana-autotrace-ignore: "true"
       {{- if .Values.webhook.pod.additionalAnnotations }}
       annotations:
         {{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
@@ -50,6 +55,8 @@ spec:
           capabilities:
             drop:
               - all
+        resources:
+{{ toYaml .Values.webhook.pod.resources | indent 10 }}
         env:
         - name: WEBHOOK_POD_NAMESPACE
           valueFrom:
@@ -61,7 +68,7 @@ spec:
               fieldPath: metadata.name
         - name: SERVER_PORT
           value: {{ .Values.webhook.pod.port | quote }}
-        - name: IGNORED_NAMESPACES
+        - name: INSTANA_AUTOTRACE_IGNORED_NAMESPACES
           value: {{ join "," .Values.autotrace.exclude.namespaces }}
         {{- if .Values.autotrace.instrumentation.securityContext }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_SECURITY_CONTEXT
@@ -83,17 +90,17 @@ spec:
           value: {{ .Values.autotrace.ingress_nginx.enabled | quote }}
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
           value: {{ .Values.autotrace.libinstana_init.enabled | quote }}
-        {{- if .Values.webhook.debug }}
         - name: LOGGING_LEVEL_ROOT
+        {{- if .Values.webhook.debug }}
           value: DEBUG
+        {{- else }}
+          value: INFO
         {{- end }}
         - name: JAVA_TOOL_OPTIONS
         {{- if (and .Values.webhook.ssl.insecure .Values.webhook.debug) }}
           value: '-Dcom.sun.net.ssl.checkRevocation=false -Djavax.net.debug=ssl,handshake'
         {{- else if .Values.webhook.ssl.insecure }}
           value: '-Dcom.sun.net.ssl.checkRevocation=false'
-        {{- else if .Values.webhook.debug }}
-          value: '-Djavax.net.debug=all'
         {{- else }}
           value: ''
         {{- end }}
@@ -103,6 +110,28 @@ spec:
         ports:
         - containerPort: {{ .Values.webhook.pod.port }}
       {{- if .Values.webhook.pod.tolerations }}
+        readinessProbe:
+          httpGet:
+{{- if .Values.webhook.pod.hostNetwork }}
+            host: 127.0.0.1
+{{- end }}
+            path: /actuator/health/readiness
+            port: {{ .Values.webhook.pod.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+{{- if .Values.webhook.pod.hostNetwork }}
+            host: 127.0.0.1
+{{- end }}
+            path: /actuator/health/liveness
+            port: {{ .Values.webhook.pod.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
       tolerations:
         {{- toYaml .Values.webhook.tolerations | nindent 8 }}
       {{- end }}
