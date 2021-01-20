@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.192.3
+
+- Update the @instana/collector Node.js package to 1.112.0
+
 ## 1.192.2
 
 - Reduce amount of added labels
