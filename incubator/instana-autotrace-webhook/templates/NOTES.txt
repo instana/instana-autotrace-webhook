@@ -7,3 +7,7 @@ It will automatically instrument:
 {{- if .Values.autotrace.netcore.enabled }}
   - .NET Core applications
 {{- end }}
+
+Logs for the Instana AutoTrace WebHook are available via:
+
+  kubectl logs -l app.kubernetes.io/name={{ .Release.Name }} -n {{ .Release.Namespace }}

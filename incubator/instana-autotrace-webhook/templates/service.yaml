@@ -3,14 +3,17 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}
   labels:
-    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
-    {{- if .Values.webhook.service.additionalLabels }}
-    {{ toYaml .Values.webhook.service.additionalLabels | indent 6 }}
-    {{- end }}
+{{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+{{- if .Values.webhook.service.additionalLabels }}
+{{ toYaml .Values.webhook.service.additionalLabels | indent 6 }}
+{{- end }}
   annotations:
-    {{- if .Values.webhook.service.additionalAnnotations }}
-    {{ toYaml .Values.webhook.service.additionalAnnotations | indent 4 }}
-    {{- end }}
+{{- if .Values.openshift.enabled }}
+    service.beta.openshift.io/serving-cert-secret-name: instana-autotrace-webhook-certs
+{{- end }}
+{{- if .Values.webhook.service.additionalAnnotations }}
+{{ toYaml .Values.webhook.service.additionalAnnotations | indent 4 }}
+{{- end }}
 spec:
   selector:
     app.kubernetes.io/instance: instana-autotrace-webhook

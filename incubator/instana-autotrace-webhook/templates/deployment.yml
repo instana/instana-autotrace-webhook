@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
   name: instana-autotrace-webhook
   labels:
-    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
-    {{- if .Values.webhook.deployment.additionalLabels }}
-    {{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
-    {{- end }}
-  {{- if .Values.webhook.deployment.additionalAnnotations }}
+{{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+{{- if .Values.webhook.deployment.additionalLabels }}
+{{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
+{{- end }}
+{{- if .Values.webhook.deployment.additionalAnnotations }}
   annotations:
-    {{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
-  {{- end }}
+{{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
+{{- end }}
 spec:
   replicas: {{ .Values.webhook.replicas }}
   selector:
@@ -25,26 +25,32 @@ spec:
     metadata:
       name: instana-autotrace-webhook
       labels:
-        {{- if .Values.webhook.pod.additionalLabels }}
-        {{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
-        {{- end }}
-        {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
+{{- if .Values.webhook.pod.additionalLabels }}
+{{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
+{{- end }}
+{{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
         instana-autotrace-ignore: "true"
-      {{- if .Values.webhook.pod.additionalAnnotations }}
+{{- if .Values.webhook.pod.additionalAnnotations }}
       annotations:
-        {{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
-      {{- end }}
+{{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
+{{- end }}
     spec:
-      hostNetwork: {{ .Values.webhook.pod.hostNetwork }}
-      {{- if .Values.rbac.enabled }}
+{{/*
+  Host Network access requires RBAC on OpenShift, as we need to grant the
+  "hostnetwork" security context constraint, so we just jump the gun and
+  add RBAC as a dependency
+*/}}
+{{- if or .Values.rbac.enabled .Values.openshift.enabled }}
       serviceAccountName: {{ .Release.Name }}
-      {{- end }}
+{{- else }}
+      serviceAccountName: default
+{{- end }}
       securityContext:
-      {{- if .Values.webhook.pod.securityContext }}
+{{- if .Values.webhook.pod.securityContext }}
 {{ toYaml .Values.webhook.pod.securityContext | indent 8 }}
-      {{- end }}
+{{- end }}
       imagePullSecrets:
-      - name: containers-instana-io
+{{ toYaml .Values.webhook.imagePullSecrets | indent 8 }}
       containers:
       - name: instana-autotrace-webhook
         image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image | quote }}
@@ -70,10 +76,10 @@ spec:
           value: {{ .Values.webhook.pod.port | quote }}
         - name: INSTANA_AUTOTRACE_IGNORED_NAMESPACES
           value: {{ join "," .Values.autotrace.exclude.namespaces }}
-        {{- if .Values.autotrace.instrumentation.securityContext }}
+{{- if .Values.autotrace.instrumentation.securityContext }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_SECURITY_CONTEXT
           value: {{ toJson .Values.autotrace.instrumentation.securityContext | default "{}" | quote }}
-        {{- end }}
+{{- end }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
           value: {{ .Values.autotrace.instrumentation.image | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
@@ -91,25 +97,30 @@ spec:
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
           value: {{ .Values.autotrace.libinstana_init.enabled | quote }}
         - name: LOGGING_LEVEL_ROOT
-        {{- if .Values.webhook.debug }}
+{{- if .Values.webhook.debug }}
           value: DEBUG
-        {{- else }}
+{{- else }}
           value: INFO
-        {{- end }}
+{{- end }}
         - name: JAVA_TOOL_OPTIONS
-        {{- if (and .Values.webhook.ssl.insecure .Values.webhook.debug) }}
+{{- if (and .Values.webhook.ssl.insecure .Values.webhook.debug) }}
           value: '-Dcom.sun.net.ssl.checkRevocation=false -Djavax.net.debug=ssl,handshake'
-        {{- else if .Values.webhook.ssl.insecure }}
+{{- else if .Values.webhook.ssl.insecure }}
           value: '-Dcom.sun.net.ssl.checkRevocation=false'
-        {{- else }}
+{{- else }}
           value: ''
-        {{- end }}
+{{- end }}
+        - name: _JAVA_OPTIONS
+          value: '-XX:+UseContainerSupport -XX:MaxRAMFraction=3'
         volumeMounts:
           - name: certificates
             mountPath: /app/certs
         ports:
         - containerPort: {{ .Values.webhook.pod.port }}
-      {{- if .Values.webhook.pod.tolerations }}
+{{- if and (or .Values.rbac.enabled .Values.openshift.enabled) .Values.webhook.pod.hostNetwork }}
+          hostPort: {{ .Values.webhook.pod.port }}
+{{- end }}
+{{- if .Values.webhook.pod.tolerations }}
         readinessProbe:
           httpGet:
 {{- if .Values.webhook.pod.hostNetwork }}
@@ -133,12 +144,12 @@ spec:
           timeoutSeconds: 1
           failureThreshold: 3
       tolerations:
-        {{- toYaml .Values.webhook.tolerations | nindent 8 }}
-      {{- end }}
-      {{- if .Values.webhook.affinity }}
+{{- toYaml .Values.webhook.tolerations | nindent 8 }}
+{{- end }}
+{{- if .Values.webhook.affinity }}
       affinity:
-        {{- toYaml .Values.webhook.affinity | nindent 8 }}
-      {{- end }}
+{{- toYaml .Values.webhook.affinity | nindent 8 }}
+{{- end }}
       volumes:
         - name: certificates
           secret:

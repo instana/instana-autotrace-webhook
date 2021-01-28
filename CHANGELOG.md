@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.193.0
+
+- Update the .NET Core dependencies to 1.193.1
+- Update the @instana/collector Node.js package to 1.113.0
+- Update the @instana/collector Node.js package to 1.112.1
+- Improve OpenShift RBAC setup
+
 ## 1.192.3
 
 - Update the @instana/collector Node.js package to 1.112.0

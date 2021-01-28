@@ -1,16 +1,20 @@
 # Default values for instana-autotrace-webhook.
 
 rbac:
-  enabled: false
+  enabled: true # Setting openshift.enabled=true implies rbac.enabled=true
   psp: # Ignored unless rbac.enabled == true
     enabled: true
+openshift:
+  enabled: false # Deploying on OpenShift implies rbac.enabled=true
 webhook:
   debug: false
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:5395db6bc47f1bf3067974007321e92a13c8e74ff46a879b6df70aa107e40b4a
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:dc6b11a89b3bb3dc5d2e7049282f9077125b3671ba29c410a2cecbe8c475b135
   imagePullPolicy: Always
+  imagePullSecrets:
+    - name: containers.instana.io
   imagePullCredentials:
     registry: containers.instana.io
     username: _
@@ -31,15 +35,15 @@ webhook:
     port: 42650
     # Ensure that, in case of overlay networks, we bind to the host network, or the control plane
     # won't be able to call into this webhook
-    hostNetwork: true
+    hostNetwork: true # Ignored unless rbac.enabled=true
     # This security context is carried verbatim to the security context of the webhook pod
     securityContext:
     resources:
       requests:
-        memory: "256Mi"
+        memory: "1Gi"
         cpu: 0.5
       limits:
-        memory: "512Mi"
+        memory: "1Gi"
         cpu: 1.0
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
@@ -49,7 +53,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:2c27945c6cccd42c3c12f2727309b44501744aabd45082f504ad4bae870aa229
+    image: instana/instrumentation@sha256:50e461a288a593586ed6b7f1e30cc04bfe9b521c3b53cb6d710bf3c9b382ebe8
     imagePullPolicy: Always
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:

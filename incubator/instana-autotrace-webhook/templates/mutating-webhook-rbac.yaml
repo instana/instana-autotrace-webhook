@@ -1,9 +1,10 @@
-{{- if .Values.rbac.enabled }}
+{{- if or .Values.rbac.enabled .Values.openshift.enabled }}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
 ---
@@ -16,11 +17,26 @@ metadata:
 rules:
 - apiGroups: ["admissionregistration.k8s.io"]
   resources: ["mutatingwebhookconfigurations"]
-  verbs:
-    - "get"
-    - "list"
-    - "watch"
-    - "patch"
+  resourceNames: ["*"]
+  verbs: ["get", "list", "watch", "patch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+  resourceNames: ["*"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  resourceNames: ["*"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  resourceNames: ["*"]
+  verbs: ["get", "list", "watch"]
+{{ if .Values.webhook.pod.hostNetwork }}
+- apiGroups: ["security.openshift.io"]
+  resourceNames: ["hostnetwork"]
+  resources: ["securitycontextconstraints"]
+  verbs: ["use"]
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

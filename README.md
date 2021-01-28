@@ -21,6 +21,8 @@ helm install --create-namespace --namespace instana-autotrace-webhook instana-au
   --set webhook.imagePullCredentials.password=<download_key>
 ```
 
+**Important:** When installing on OpenShift, you _must_ set additionally `--set openshift.enabled=true`.
+
 ## Verify it works
 
 First of all, ensure the `instana-autotrace-webhook` in the `instana-autotrace-webhook` namespace is running as expected:
@@ -53,24 +55,24 @@ The `instana-autotrace-webhook` Helm chart will be regularly updated to use the 
 
 ```bash
 helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
-  --repo https://agents.instana.io/helm instana-autotrace-webhook
+  --repo https://agents.instana.io/helm instana-autotrace-webhook \
+  --reuse-values
 ```
 
 ## Gotchas
 
 - The Instana AutoTrace WebHook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace WebHook to do its magic.
-- Only amd64 Kubernetes nodes are currently supported.
+- Only `linux/amd64` Kubernetes nodes are currently supported.
 
 ## Limitations
 
 The following limitations need to be lifted before the Instana AutoTrace WebHook enters Beta:
 
-- Validate in the field the support for PodSecurityPolicies and Security Context for both the WebHook pod and the Instrumentation image.
 - Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
   There is no known side-effect of this, don't get spooked :-)
 
-From Beta to General Availability, we expect it to be only about ironing bugs, should they come up.
+From Beta to General Availability, we expect it to be only about ironing out bugs, should they come up.
 
 ## Configuration
 
@@ -92,7 +94,21 @@ By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the 
 
 Irrespective of the value of the `autotrace.opt_in`, the AutoTrace WebHook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
 
-The `instana-autotrace: "false"` label can is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
+The `instana-autotrace: "false"` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
+
+### Ignoring namespaces
+
+Using the `autotrace.exclude.namespaces` configuration, you can exclude entire namespaces from being auto-instrumented.
+
+Resources that have the `instana-autotrace: "true"` label, will be instrumented regardless of namespace exclusion.
+
+The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
+
+### Ignoring resources
+
+Resources that have the `instana-autotrace: "false"` label, will be ignored regardless other settings.
+
+The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
 
 ## Troubleshooting
 
