@@ -1,6 +1,6 @@
 # Instana AutoTrace WebHook
 
-This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Instana AutoTrace WebHook, that automatically configures the Instana tracing on Node.js and .NET Core applications (and soon more stuff :-) ) running across the entire Kubernetes cluster.
+This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Instana AutoTrace WebHook, that automatically configures the Instana tracing on Node.js, .NET Core and Ruby applications (and soon more stuff :-) ) running across the entire Kubernetes cluster.
 
 **Note:** The Instana AutoTrace WebHook is currently in Beta.
 It is in a very good shape to be used in most production use-cases, and we will declare General Availability in a few weeks.
@@ -65,20 +65,13 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
   That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace WebHook to do its magic.
 - Only `linux/amd64` Kubernetes nodes are currently supported.
 
-## Limitations
-
-The following limitations need to be lifted before the Instana AutoTrace WebHook enters Beta:
-
-- Environment variables applicable only for Node.js and .NET Core will show up in processes running in other runtimes.
-  There is no known side-effect of this, don't get spooked :-)
-
-From Beta to General Availability, we expect it to be only about ironing out bugs, should they come up.
-
 ## Configuration
 
 ### Role-based Access Control
 
 In order to deploy the AutoTrace WebHook into a `ServiceAccount` guarded by a `ClusterRole` and matching `ClusterRoleBinding`, set the `rbac.enabled=true` flag when deploying the Helm chart.
+
+In addition to the RBAC, if you use Pod Security Policies, add `rbac.psp.enabled=true` to the Helm arguments.
 
 ### Container port
 

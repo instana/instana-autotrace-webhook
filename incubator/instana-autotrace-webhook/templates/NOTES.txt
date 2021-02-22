@@ -7,6 +7,9 @@ It will automatically instrument:
 {{- if .Values.autotrace.netcore.enabled }}
   - .NET Core applications
 {{- end }}
+{{- if .Values.autotrace.ruby.enabled }}
+  - Ruby applications
+{{- end }}
 
 Logs for the Instana AutoTrace WebHook are available via:
 

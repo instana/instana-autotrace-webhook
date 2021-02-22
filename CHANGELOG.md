@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.194.3
+
+- Update the instana Gem to 1.193.6
+- Add support for Ruby
+- Configure WebHook resource requests to be CPU-burstable
+
 ## 1.194.2
 
 - Promote Instana AutoTrace WebHook to BETA

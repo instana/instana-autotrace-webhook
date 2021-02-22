@@ -11,7 +11,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:8eaa5ce2bcbbba007846c3f4acb64093c7c6cd33d92bbc4245e328097cb1b6e2
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:3a5b85adf0a90d822fa1e8be7d4b7b45a8db57af2bb211ed25d16ae7458c2efd
   imagePullPolicy: Always
   imagePullSecrets:
     - name: containers.instana.io
@@ -38,13 +38,16 @@ webhook:
     hostNetwork: true # Ignored unless rbac.enabled=true
     # This security context is carried verbatim to the security context of the webhook pod
     securityContext:
-    resources:
-      requests:
-        memory: "1Gi"
-        cpu: 0.5
-      limits:
-        memory: "1Gi"
-        cpu: 1.0
+    ### Better not to specify a resource limit: the WebHook, being a Spring-based app,
+    ### needs a burst of CPU on startup, but then is very, very efficient. For more info,
+    ### refer to https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable
+    # resources:
+    #   requests:
+    #     memory: "1Gi"
+    #     cpu: 0.5
+    #   limits:
+    #     memory: "1Gi"
+    #     cpu: 1.0
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
   # labelled with `instana-autotrace=false`. If this switch is flipped on,
@@ -53,7 +56,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:001a5de924c3eab0059212dd1428d8a66bf44dc378fa92c48291217c6b5951e4
+    image: instana/instrumentation@sha256:b669cd004ffdd2a507359e2b08e4f5dd7a40823e74e509e0198cb5af18a0e7ac
     imagePullPolicy: Always
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
@@ -69,6 +72,8 @@ autotrace:
   nodejs:
     enabled: true
   netcore:
+    enabled: true
+  ruby:
     enabled: true
   libinstana_init:
     enabled: true

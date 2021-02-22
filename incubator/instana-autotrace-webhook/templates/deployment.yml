@@ -90,6 +90,8 @@ spec:
           value: {{ .Values.autotrace.nodejs.enabled | quote }}
         - name: INSTANA_AUTOTRACE_NETCORE
           value: {{ .Values.autotrace.netcore.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_RUBY
+          value: {{ .Values.autotrace.ruby.enabled | quote }}
         - name: INSTANA_AUTOTRACE_KONG
           value: {{ .Values.autotrace.kong.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX
