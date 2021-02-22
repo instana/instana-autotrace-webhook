@@ -110,8 +110,6 @@ spec:
 {{- else }}
           value: ''
 {{- end }}
-        - name: _JAVA_OPTIONS
-          value: '-XX:+UseContainerSupport -XX:MaxRAMFraction=3'
         volumeMounts:
           - name: certificates
             mountPath: /app/certs

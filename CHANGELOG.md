@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.194.2
+
+- Promote Instana AutoTrace WebHook to BETA
+
 ## 1.194.1
 
 
