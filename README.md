@@ -1,6 +1,6 @@
 # Instana AutoTrace WebHook
 
-This project provides a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/), called Instana AutoTrace WebHook, that automatically configures the Instana tracing on Node.js, .NET Core and Ruby applications (and soon more stuff :-) ) running across the entire Kubernetes cluster.
+The Instana AutoTrace WebHook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core and Ruby applications running across the entire Kubernetes cluster.
 
 **Note:** The Instana AutoTrace WebHook is currently in Beta.
 It is in a very good shape to be used in most production use-cases, and we will declare General Availability in a few weeks.
@@ -107,7 +107,7 @@ The `instana-autotrace` label is respected in metadata of DaemonSets, Deployment
 
 If you do not see the Instana AutoTrace WebHook have effect on your _new_ Kubernetes resources, the steps to troubleshoot are the following.
 
-### Ensure the InstanaAutoTraceWebHook is receiving requests
+### Ensure the Instana AutoTrace WebHook is receiving requests
 
 Check the logs of the `instana-autotrace-webhook` pod.
 Using `kubectl`, you can launch the following command:

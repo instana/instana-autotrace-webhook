@@ -38,16 +38,16 @@ webhook:
     hostNetwork: true # Ignored unless rbac.enabled=true
     # This security context is carried verbatim to the security context of the webhook pod
     securityContext:
-    ### Better not to specify a resource limit: the WebHook, being a Spring-based app,
+    ### Better not to specify CPU resource limits: the WebHook, being a Spring-based app,
     ### needs a burst of CPU on startup, but then is very, very efficient. For more info,
     ### refer to https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable
-    # resources:
-    #   requests:
-    #     memory: "1Gi"
-    #     cpu: 0.5
-    #   limits:
-    #     memory: "1Gi"
-    #     cpu: 1.0
+    resources:
+      requests:
+        memory: "512Mi"
+        #    cpu: 0.5
+      limits:
+        memory: "1Gi"
+        #    cpu: 1.0
 autotrace:
   # By default the instana-autotrace-webhook will instrument all pods that are not
   # labelled with `instana-autotrace=false`. If this switch is flipped on,
@@ -56,7 +56,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:b669cd004ffdd2a507359e2b08e4f5dd7a40823e74e509e0198cb5af18a0e7ac
+    image: instana/instrumentation@sha256:cc5ba2e1052fd64cf29dc6175da353798554277b55cf1811c7064e3b37d2f319
     imagePullPolicy: Always
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
@@ -72,8 +72,6 @@ autotrace:
   nodejs:
     enabled: true
   netcore:
-    enabled: true
-  ruby:
     enabled: true
   libinstana_init:
     enabled: true

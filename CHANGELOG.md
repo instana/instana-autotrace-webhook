@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.194.4
+
+- Update the @instana/collector Node.js package to 1.115.0
+- Set memory limits for webhook pod
+
 ## 1.194.3
 
 - Update the instana Gem to 1.193.6
