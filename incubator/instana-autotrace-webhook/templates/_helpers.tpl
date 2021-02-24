@@ -38,7 +38,7 @@ Add Helm metadata to resource labels.
 {{- define "instana-autotrace-webhook.commonLabels" -}}
 app.kubernetes.io/name: {{ include "instana-autotrace-webhook.name" . }}
 {{ if .Values.templating -}}
-app.kubernetes.io/version: {{ .Chart.Version }}
+app.kubernetes.io/version: {{ .Chart.AppVersion }}
 {{- else -}}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.195.3
+
+- Add Chart AppVersion as value of new 'instana-autotrace-version' on modified resources
+
 ## 1.195.2
 
 - Update the instana Gem to 1.195.0

@@ -49,7 +49,7 @@ If, on the other hand, you do _not_ see the `instana-autotrace-applied` labels a
 
 ## Updates
 
-The Instana AutoTrace WebHook does not currently have an automated way of upgrading the instrumentation it will install.
+The Instana AutoTrace WebHook does not currently have an automated way of upgrading the instrumentation that it will install.
 The instrumentation is delivered over the [`instana/instrumentation` image](https://hub.docker.com/repository/docker/instana/instrumentation).
 The `instana-autotrace-webhook` Helm chart will be regularly updated to use the newest `instana/instrumentation` image; so, to update the instrumentation to the latest and greatest version, you can upgrade the deployment with:
 
@@ -58,6 +58,9 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
   --repo https://agents.instana.io/helm instana-autotrace-webhook \
   --reuse-values
 ```
+
+You can find out which version of the AutoTrace WebHook has been applied to which of your resources by looking up the `instana-autotrace-version` label.
+The `instana-autotrace-version` label will be applied to the Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs.
 
 ## Gotchas
 

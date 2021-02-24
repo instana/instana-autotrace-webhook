@@ -74,6 +74,8 @@ spec:
               fieldPath: metadata.name
         - name: SERVER_PORT
           value: {{ .Values.webhook.pod.port | quote }}
+        - name: INSTANA_AUTOTRACE_WEBHOOK_VERSION
+          value: {{ .Chart.AppVersion }}
         - name: INSTANA_AUTOTRACE_IGNORED_NAMESPACES
           value: {{ join "," .Values.autotrace.exclude.namespaces }}
 {{- if .Values.autotrace.instrumentation.securityContext }}
