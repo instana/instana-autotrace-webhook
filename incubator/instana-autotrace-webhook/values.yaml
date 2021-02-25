@@ -56,7 +56,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:38e201ded4a1173efb33cae16e098d60bfbbe66b4d5193e9e7307e26307bf616
+    image: instana/instrumentation@sha256:1795c387e1727dee05c2c0168c306742df06e64c55330599d7f4807c0435daf6
     imagePullPolicy: Always
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
@@ -72,6 +72,8 @@ autotrace:
   nodejs:
     enabled: true
   netcore:
+    enabled: true
+  ruby:
     enabled: true
   libinstana_init:
     enabled: true

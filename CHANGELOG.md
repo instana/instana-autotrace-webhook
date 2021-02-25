@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.195.4
+
+- Update the instana Gem to 1.195.1
+- Fix initialization bug due to missing default value for 'autotrace.ruby.enabled'
+
 ## 1.195.3
 
 - Add Chart AppVersion as value of new 'instana-autotrace-version' on modified resources
