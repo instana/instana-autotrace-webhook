@@ -2,9 +2,7 @@
 
 ## 1.195.6
 
-- Fix issue with misnamed secret that prevented pulling webhook images
-- Create containers-instana-io secret only when the webhook image comes from containers.instana.io
-- Change default imagePullPolicy of WebHook and Instrumentation image to 'IfNotPresent'
+- Use SaaS-based versioning scheme also for tags and Helm chart version
 
 ## 1.195.5
 
