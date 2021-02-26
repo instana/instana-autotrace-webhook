@@ -48,6 +48,15 @@ helm.sh/chart: {{ include "instana-autotrace-webhook.chart" . }}
 
 {{- define "instana-autotrace-webhook.webhook.imagePullSecret" }}
 {{- with .Values.webhook.imagePullCredentials }}
+{{- if not .registry }}
+{{- fail "The 'webhook.imagePullCredentials.registry' setting must be provided" }}
+{{- end }}
+{{- if not .username }}
+{{- fail "The 'webhook.imagePullCredentials.username' setting must be provided" }}
+{{- end }}
+{{- if not .password }}
+{{- fail "The 'webhook.imagePullCredentials.password' setting must be provided" }}
+{{- end }}
 {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .registry .username .password (printf "%s:%s" .username .password | b64enc) | b64enc }}
 {{- end }}
 {{- end }}

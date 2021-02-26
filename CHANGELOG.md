@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.195.5
+
+- Fix issue with misnamed secret that prevented pulling webhook images
+- Create containers-instana-io secret only when the webhook image comes from containers.instana.io
+- Change default imagePullPolicy of WebHook and Instrumentation image to 'IfNotPresent'
+
 ## 1.195.4
 
 - Update the instana Gem to 1.195.1
