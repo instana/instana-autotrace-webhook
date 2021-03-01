@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.195.8
+
+- Update the .NET Core dependencies to 1.195.4
+
 ## 1.195.7
 
 - Update the .NET Core dependencies to 1.195.3
