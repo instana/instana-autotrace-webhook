@@ -21,8 +21,10 @@ annotations:
       url: https://github.com/instana/instana-autotrace-webhook
 
 maintainers:
-- email: michele.mancioppi@instana.com
-  name: Michele Mancioppi
+- email: henning.treu@ibm.com
+  name: Henning Treu
+- email: cedric.ziel@ibm.com
+  name: Cedric Ziel
 
 type: application
 
