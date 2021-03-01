@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.195.7
+
+- Update the .NET Core dependencies to 1.195.3
+- Use Instana SaaS-based versioning scheme for tags and Helm chart version
+
 ## 1.195.6
 
 - Use SaaS-based versioning scheme also for tags and Helm chart version
