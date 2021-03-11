@@ -95,6 +95,31 @@ The `instana-autotrace: "false"` label is respected in metadata of DaemonSets, D
 ### Ignoring namespaces
 
 Using the `autotrace.exclude.namespaces` configuration, you can exclude entire namespaces from being auto-instrumented.
+Helm is... quaint... around list-like data structures when passing values from the command line with `--set`, so you will need to do something like the following:
+
+```sh
+helm upgrade instana-autotrace-webhook ... --set autotrace.exclude.namespaces[0]=ignore_this_namespace
+```
+
+The `[0]` in the list above is the positional argument in the list of ignored namespaces, which is in this case a list of one element (list indexes start from `0` in Helm).
+
+If you want to ignore multiple namespaces, you will need to do the following:
+
+```sh
+helm upgrade instana-autotrace-webhook ... --set autotrace.exclude.namespaces[0]=ignore_this_namespace --set autotrace.exclude.namespaces[1]=ignore_this_other_namespace_too
+```
+
+Notice that, even when using `--reuse-values`, you will still need to specify the _whole list of excluded namespaces_ (Helm does not support appending to lists), which is not convenient.
+In case of wanting to exclude namespaces, the suggested approach is to use a `values.yaml` file instead.
+
+#### Built-in ignored namespaces
+
+The Helm chart has a built-in list of excluded namespacesm, like `kube-*` and `openshift-*`.
+Due to the lack of list-append capability of Helm, they are stored in a separate list called `autotrace.exclude.builtin_namespaces`.
+It is strongly advised not to change that list.
+We are likely to grow that list over time, and if you modify it, your modifications may be wiped in the next `helm upgrade`.
+
+#### Ignored namespaces and opt-in resources
 
 Resources that have the `instana-autotrace: "true"` label, will be instrumented regardless of namespace exclusion.
 

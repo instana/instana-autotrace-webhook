@@ -79,8 +79,9 @@ autotrace:
     enabled: true
   # Namespaces that are always ignored, no matter what
   exclude:
-    namespaces:
+    builtin_namespaces:
       - kube-* # kube-node-lease, kube-public, kube-system
       - instana-* # Avoid conflicts with the Instana Agent and other Instana-related deployments
       - openshift-* # Guess what, Openshift!
       - pks-system # TKGI, formerly known as PKS
+    namespaces: []

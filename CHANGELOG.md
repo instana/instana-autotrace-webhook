@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.196.1
+
+- Improve namespace exclude functionality
+- Improve namespace ignore mechanism and its documentation
+
 ## 1.196.0
 
 - Update the @instana/collector Node.js package to 1.117.0

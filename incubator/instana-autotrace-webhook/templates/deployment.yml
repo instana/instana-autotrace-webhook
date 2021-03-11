@@ -77,7 +77,7 @@ spec:
         - name: INSTANA_AUTOTRACE_WEBHOOK_VERSION
           value: {{ .Chart.AppVersion }}
         - name: INSTANA_AUTOTRACE_IGNORED_NAMESPACES
-          value: {{ join "," .Values.autotrace.exclude.namespaces }}
+          value: {{ join "," (concat .Values.autotrace.exclude.builtin_namespaces .Values.autotrace.exclude.namespaces)}}
 {{- if .Values.autotrace.instrumentation.securityContext }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_SECURITY_CONTEXT
           value: {{ toJson .Values.autotrace.instrumentation.securityContext | default "{}" | quote }}
