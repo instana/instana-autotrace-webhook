@@ -6,7 +6,6 @@
 
 ## 1.196.1
 
-- Improve namespace exclude functionality
 - Improve namespace ignore mechanism and its documentation
 
 ## 1.196.0
