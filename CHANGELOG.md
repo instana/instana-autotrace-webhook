@@ -5,6 +5,11 @@
 - Update the @instana/collector Node.js package to 1.117.0
 - Update the .NET Core dependencies to 1.195.5
 
+## 1.196.0
+
+- Update the @instana/collector Node.js package to 1.117.0
+- Update the .NET Core dependencies to 1.195.5
+
 ## 1.195.10
 
 - Update the @instana/collector Node.js package to 1.116.0
