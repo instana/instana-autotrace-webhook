@@ -2,6 +2,7 @@
 
 ## 1.196.4
 
+- Fix: Prevent some crashes in Alpine-based containers due to spurious configurations of `libinstana_init`
 
 ## 1.196.3
 
