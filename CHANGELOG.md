@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.196.5
+
+- Update the .NET Core dependencies to 1.196.1
+
 ## 1.196.4
 
 - Fix: Prevent some crashes in Alpine-based containers due to spurious configurations of `libinstana_init`
