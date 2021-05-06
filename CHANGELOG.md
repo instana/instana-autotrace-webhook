@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.200.0
+
+- Update the instana Gem to 1.199.6
+- Update the @instana/collector Node.js package to 1.119.4
+- Update the @instana/collector Node.js package to 1.119.3
+- Update the .NET Core dependencies to 1.199.5
+- Update the .NET Core dependencies to 1.199.4
+- Update the instana Gem to 1.199.5
+- Update the .NET Core dependencies to 1.199.3
+- Update the .NET Core dependencies to 1.199.2
+- Update the .NET Core dependencies to 1.199.1
+- Update the @instana/collector Node.js package to 1.119.2
+- Update the instana Gem to 1.199.4
+- Update the instana Gem to 1.199.3
+- Update the instana Gem to 1.199.2
+- Update the instana Gem to 1.199.1
+- Update the instana Gem to 1.199.0
+- Update the instana Gem to 1.198.0
+- Update the @instana/collector Node.js package to 1.119.1
+- Update the @instana/collector Node.js package to 1.119.0
+- Update the instana Gem to 1.197.0
+
 ## 1.197.3
 
 - Update the @instana/collector Node.js package to 1.118.0
