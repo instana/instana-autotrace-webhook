@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.204.2
+
+- Update the .NET Core dependencies to 1.204.1
+
 ## 1.204.1
 
 
