@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.208.1
+
+- Update the @instana/collector Node.js package to 1.131.1
+
 ## 1.208.0
 
 - Update the instana Gem to 1.206.0
