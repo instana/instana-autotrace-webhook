@@ -68,7 +68,7 @@ autotrace:
   kong:
     enabled: true
   ingress_nginx:
-    enabled: true
+    enabled: false
   nodejs:
     enabled: true
   netcore:
