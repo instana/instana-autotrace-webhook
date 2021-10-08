@@ -10,6 +10,9 @@ It will automatically instrument:
 {{- if .Values.autotrace.ruby.enabled }}
   - Ruby applications
 {{- end }}
+{{- if .Values.autotrace.ingress_nginx.enabled }}
+  - Ingress NGINX
+{{- end }}
 
 Logs for the Instana AutoTrace WebHook are available via:
 

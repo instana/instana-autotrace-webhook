@@ -1,0 +1,11 @@
+# These values override some of the values set in the values.yaml and are used when
+# developing against locally built images and pushed to the local registry to be used
+# with minikube
+webhook:
+  image: 192.168.1.5:5000/containers.instana.io/instana/release/agent/instana-autotrace-webhook:local
+  debug: true
+
+autotrace:
+  image: 192.168.1.5:5000/instana/instrumentation:local
+  ingress_nginx:
+    enabled: true
