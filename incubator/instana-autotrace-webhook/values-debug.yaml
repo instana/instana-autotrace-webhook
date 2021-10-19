@@ -2,10 +2,20 @@
 # developing against locally built images and pushed to the local registry to be used
 # with minikube
 webhook:
-  image: 192.168.1.5:5000/containers.instana.io/instana/release/agent/instana-autotrace-webhook:local
+  image: myregistry:5000/containers.instana.io/instana/release/agent/instana-autotrace-webhook:local
   debug: true
 
 autotrace:
-  image: 192.168.1.5:5000/instana/instrumentation:local
+  instrumentation:
+    image: myregistry:5000/instana/instrumentation:local
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      privileged: false
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1001
+      capabilities:
+        drop:
+          - all
   ingress_nginx:
     enabled: true
