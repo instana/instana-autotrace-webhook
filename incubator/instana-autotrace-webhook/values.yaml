@@ -56,7 +56,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:763dc57af5f22e719892aab5e51f4b71641809ea6702b2d2e782ee8939d0f801
+    image: instana/instrumentation@sha256:5e2fb4e9ee6102ec2b45c1251e2dc06d0372032d7fa7829368622d1d2d091001
     imagePullPolicy: IfNotPresent
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
