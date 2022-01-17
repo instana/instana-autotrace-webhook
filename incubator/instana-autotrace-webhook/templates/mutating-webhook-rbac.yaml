@@ -24,7 +24,7 @@ rules:
   resourceNames: ["*"]
   verbs: ["get", "list", "watch"]
 - apiGroups: [""]
-  resources: ["pods"]
+  resources: ["pods", "configmaps"]
   resourceNames: ["*"]
   verbs: ["get", "list", "watch"]
 - apiGroups: ["apps.openshift.io"]

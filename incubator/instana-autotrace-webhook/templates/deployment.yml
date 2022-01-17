@@ -94,8 +94,6 @@ spec:
           value: {{ .Values.autotrace.netcore.enabled | quote }}
         - name: INSTANA_AUTOTRACE_RUBY
           value: {{ .Values.autotrace.ruby.enabled | quote }}
-        - name: INSTANA_AUTOTRACE_KONG
-          value: {{ .Values.autotrace.kong.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX
           value: {{ .Values.autotrace.ingress_nginx.enabled | quote }}
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
@@ -106,14 +104,18 @@ spec:
 {{- else }}
           value: INFO
 {{- end }}
-        - name: JAVA_TOOL_OPTIONS
-{{- if (and .Values.webhook.ssl.insecure .Values.webhook.debug) }}
-          value: '-Dcom.sun.net.ssl.checkRevocation=false -Djavax.net.debug=ssl,handshake'
-{{- else if .Values.webhook.ssl.insecure }}
-          value: '-Dcom.sun.net.ssl.checkRevocation=false'
-{{- else }}
-          value: ''
+{{- $javaToolOptions := ""  }}
+{{- if .Values.webhook.ssl.insecure }}
+  {{- $javaToolOptions = "-Dcom.sun.net.ssl.checkRevocation=false " }}
 {{- end }}
+{{- if .Values.webhook.debug }}
+  {{- $javaToolOptions = (print $javaToolOptions "-Dcom.sun.net.ssl.checkRevocation=false ") }}
+{{- end }}
+{{- if .Values.webhook.remoteDebug }}
+  {{- $javaToolOptions = (print $javaToolOptions "-Djavax.net.debug=ssl,handshake -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 ") }}
+{{- end }}
+        - name: JAVA_TOOL_OPTIONS
+          value: {{ $javaToolOptions }}
         volumeMounts:
           - name: certificates
             mountPath: /app/certs
@@ -121,6 +123,9 @@ spec:
         - containerPort: {{ .Values.webhook.pod.port }}
 {{- if and (or .Values.rbac.enabled .Values.openshift.enabled) .Values.webhook.pod.hostNetwork }}
           hostPort: {{ .Values.webhook.pod.port }}
+{{- end }}
+{{- if .Values.webhook.remoteDebug }}
+        - containerPort: 5005
 {{- end }}
 {{- if .Values.webhook.pod.tolerations }}
         readinessProbe:

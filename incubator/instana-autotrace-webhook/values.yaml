@@ -7,11 +7,12 @@ rbac:
 openshift:
   enabled: false # Deploying on OpenShift implies rbac.enabled=true
 webhook:
+  remoteDebug: false
   debug: false
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:b3b620717f6c20d566eb8df2e7731dfe7e284175e6d30e4b1b9f91b8fa440c14
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:c7bde418f25e47b9f0d7185e15caac51556076d1b7ccf734aa829d1ee2d053ea
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: containers-instana-io
@@ -56,7 +57,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: instana/instrumentation@sha256:613af9777b42e8de92bbae6d3188d9c169e03b1d98f9a6dbfb7ae8d431adc1f1
+    image: icr.io/instana/instrumentation@sha256:a10b11ca75815b7d07a4dab41fcadc97eb828fd5220c382fb0e1e59b33d98982
     imagePullPolicy: IfNotPresent
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
@@ -67,8 +68,6 @@ autotrace:
       capabilities:
         drop:
           - all
-  kong:
-    enabled: true
   ingress_nginx:
     enabled: false
   nodejs:
