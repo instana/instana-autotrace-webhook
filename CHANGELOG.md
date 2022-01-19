@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.216.3
+
+- Update the .NET Core dependencies to 1.216.3
+
 ## 1.216.2
 
 - Update the .NET Core dependencies to 1.216.2
