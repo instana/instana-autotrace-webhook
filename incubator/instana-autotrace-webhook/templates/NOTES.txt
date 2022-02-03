@@ -1,14 +1,22 @@
 The Instana AutoTrace WebHook is installed.
 
 It will automatically instrument:
-{{- if .Values.autotrace.nodejs.enabled }}
-  - Node.js applications
-{{- end }}
-{{- if .Values.autotrace.netcore.enabled }}
-  - .NET Core applications
-{{- end }}
-{{- if .Values.autotrace.ruby.enabled }}
-  - Ruby applications
+{{- if .Values.autotrace.libinstana_init.enabled }}
+  - Node.js, .NET Core & Ruby applications via LD_PRELOAD
+{{- else }}
+  {{- if .Values.autotrace.nodejs.enabled }}
+    {{- if .Values.autotrace.nodejs.pin1x }}
+    - Node.js applications (pinned to @instana/collector@1.x)
+    {{- else }}
+    - Node.js applications
+    {{- end }}
+  {{- end }}
+  {{- if .Values.autotrace.netcore.enabled }}
+    - .NET Core applications
+  {{- end }}
+  {{- if .Values.autotrace.ruby.enabled }}
+    - Ruby applications
+  {{- end }}
 {{- end }}
 {{- if .Values.autotrace.ingress_nginx.enabled }}
   - Ingress NGINX
