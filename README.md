@@ -50,7 +50,7 @@ If, on the other hand, you do _not_ see the `instana-autotrace-applied` labels a
 ## Updates
 
 The Instana AutoTrace WebHook does not currently have an automated way of upgrading the instrumentation that it will install.
-The instrumentation is delivered over the [`instana/instrumentation` image](https://hub.docker.com/repository/docker/instana/instrumentation).
+The instrumentation is delivered over the `instana/instrumentation` image (`icr.io/instana/instrumentation`).
 The `instana-autotrace-webhook` Helm chart will be regularly updated to use the newest `instana/instrumentation` image; so, to update the instrumentation to the latest and greatest version, you can upgrade the deployment with:
 
 ```bash
