@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.219.0
+
+- Update the .NET Core dependencies to 1.219.1
+
 ## 1.218.1
 
 
