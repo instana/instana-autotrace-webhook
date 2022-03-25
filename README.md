@@ -1,6 +1,6 @@
 # Instana AutoTrace WebHook
 
-The Instana AutoTrace WebHook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core and Ruby applications running across the entire Kubernetes cluster.
+The Instana AutoTrace WebHook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core and Ruby applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
 
 **Note:** The Instana AutoTrace WebHook is currently in Beta.
 It is in a very good shape to be used in most production use-cases, and we will declare General Availability in a few weeks.
@@ -69,6 +69,16 @@ The `instana-autotrace-version` label will be applied to the Pods, ReplicaSets, 
 - Only `linux/amd64` Kubernetes nodes are currently supported.
 
 ## Configuration
+
+### Enable `ingress-nginx` tracing
+
+To enable the automatic instrumentation of `ingress-nginx` objects in your kubernetes cluster, please set the value of `autotrace.ingress_nginx.enabled` to `true`:
+
+```
+--set autotrace.ingress_nginx.enabled=true
+```
+
+**Note:** Changes to already existing objects are only done whenever the objects are either modified or recreated.
 
 ### Role-based Access Control
 
