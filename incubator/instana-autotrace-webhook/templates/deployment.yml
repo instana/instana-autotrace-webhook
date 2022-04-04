@@ -80,7 +80,11 @@ spec:
           value: {{ join "," (concat .Values.autotrace.exclude.builtin_namespaces .Values.autotrace.exclude.namespaces)}}
 {{- if .Values.autotrace.instrumentation.securityContext }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_SECURITY_CONTEXT
+{{- if .Values.openshift.enabled }}
+          value: {{ toJson (unset (.Values.autotrace.instrumentation.securityContext | default "{}") "runAsUser") | quote }}
+{{- else }}
           value: {{ toJson .Values.autotrace.instrumentation.securityContext | default "{}" | quote }}
+{{- end }}
 {{- end }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
           value: {{ .Values.autotrace.instrumentation.image | quote }}
