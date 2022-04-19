@@ -15,7 +15,7 @@ spec:
   replicas: {{ .Values.webhook.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/instance: instana-autotrace-webhook
+      app.kubernetes.io/instance: {{ .Release.Name }}
   strategy:
     # Since we bind to the host network, a rolling update on small clusters may deadlock,
     # with new pods not able to start because the network port is taken, and old pods remaining
