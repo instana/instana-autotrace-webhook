@@ -100,6 +100,10 @@ spec:
           value: {{ .Values.autotrace.ruby.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX
           value: {{ .Values.autotrace.ingress_nginx.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS
+          value: {{ .Values.autotrace.ingress_nginx.status_enabled | quote }}
+        - name: INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS_ALLOW
+          value: {{ .Values.autotrace.ingress_nginx.status_allow | quote }}
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
           value: {{ .Values.autotrace.libinstana_init.enabled | quote }}
         - name: LOGGING_LEVEL_ROOT
