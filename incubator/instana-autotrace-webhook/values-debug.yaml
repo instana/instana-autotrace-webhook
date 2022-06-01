@@ -19,3 +19,7 @@ autotrace:
           - all
   ingress_nginx:
     enabled: true
+  ace:
+    enabled: true
+  ibmmq:
+    enabled: true

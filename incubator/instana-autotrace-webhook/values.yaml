@@ -78,6 +78,10 @@ autotrace:
     enabled: true
   ruby:
     enabled: true
+  ace:
+    enabled: false
+  ibmmq:
+    enabled: false
   libinstana_init:
     enabled: true
   # Namespaces that are always ignored, no matter what

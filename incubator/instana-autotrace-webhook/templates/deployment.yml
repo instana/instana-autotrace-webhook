@@ -98,6 +98,10 @@ spec:
           value: {{ .Values.autotrace.netcore.enabled | quote }}
         - name: INSTANA_AUTOTRACE_RUBY
           value: {{ .Values.autotrace.ruby.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_ACE
+          value: {{ .Values.autotrace.ace.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_IBMMQ
+          value: {{ .Values.autotrace.ibmmq.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX
           value: {{ .Values.autotrace.ingress_nginx.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS

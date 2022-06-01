@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.226.1
+
+
 ## 1.226.0
 
 - Update the @instana/collector Node.js package to 2.4.0
