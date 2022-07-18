@@ -16,7 +16,7 @@ metadata:
 {{- end }}
 spec:
   selector:
-    app.kubernetes.io/instance: instana-autotrace-webhook
+    app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
     - name: https
       protocol: TCP
