@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.234.0
+
+- Update the @instana/collector Node.js package to 2.8.1
+- Update the @instana/collector Node.js package to 2.8.0
+
 ## 1.233.1
 
 
