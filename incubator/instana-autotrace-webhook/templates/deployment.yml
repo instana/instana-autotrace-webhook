@@ -139,7 +139,6 @@ spec:
 {{- if .Values.webhook.remoteDebug }}
         - containerPort: 5005
 {{- end }}
-{{- if .Values.webhook.pod.tolerations }}
         readinessProbe:
           httpGet:
 {{- if .Values.webhook.pod.hostNetwork }}
@@ -162,6 +161,7 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 1
           failureThreshold: 3
+{{- if .Values.webhook.pod.tolerations }}
       tolerations:
 {{- toYaml .Values.webhook.tolerations | nindent 8 }}
 {{- end }}
