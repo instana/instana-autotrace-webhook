@@ -1,6 +1,6 @@
 # Instana AutoTrace WebHook
 
-The Instana AutoTrace WebHook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core and Ruby applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
+The Instana AutoTrace WebHook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
 
 ## Requirements
 
