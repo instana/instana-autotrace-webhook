@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.235.1
+
+- Update the .NET Core dependencies to 1.235.3
+
 ## 1.235.0
 
 - Update the .NET Core dependencies to 1.221.2
