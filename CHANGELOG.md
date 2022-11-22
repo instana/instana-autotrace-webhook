@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.238.2
+
+- Update the @instana/collector Node.js package to 2.12.0
+
 ## 1.238.1
 
 - Update the manual trigger to 1.0.3
