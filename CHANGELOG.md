@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.238.8
+
+- Update the manual trigger to 1.0.5
+
 ## 1.238.7
 
 
