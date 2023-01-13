@@ -104,6 +104,8 @@ spec:
           value: {{ .Values.autotrace.ace.enabled | quote }}
         - name: INSTANA_AUTOTRACE_IBMMQ
           value: {{ .Values.autotrace.ibmmq.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_NODEJS_ESM
+          value: {{ .Values.autotrace.nodejs.esm | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX
           value: {{ .Values.autotrace.ingress_nginx.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS
