@@ -4,6 +4,9 @@ rbac:
   enabled: true # Setting openshift.enabled=true implies rbac.enabled=true
   psp: # Ignored unless rbac.enabled == true
     enabled: true
+    # The name of an existing PodSecurityPolicy you would like to authorize for the Instana Agent pods.
+    # If not set and `enable` is true, a PodSecurityPolicy will be created with a name generated using the fullname template.
+    name: null
 openshift:
   enabled: false # Deploying on OpenShift implies rbac.enabled=true
 webhook:
@@ -57,7 +60,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:37f79946a151ca21bc3cd3e9c863dd7219102ede0051e8eedd93927321fd7e1f
+    image: icr.io/instana/instrumentation@sha256:51221fc3562814d5e81691e895bc3f3c3578bdd0cd52d3bdf5c0b09f3b5818e2
     imagePullPolicy: IfNotPresent
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:

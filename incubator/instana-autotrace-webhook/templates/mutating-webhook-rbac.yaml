@@ -37,6 +37,13 @@ rules:
   resources: ["securitycontextconstraints"]
   verbs: ["use"]
 {{- end }}
+{{- if .Values.rbac.psp.enabled}}
+- apiGroups: ["policy"]
+  resources: ["podsecuritypolicies"]
+  verbs:     ["use"]
+  resourceNames:
+  - {{ template "instana-autotrace-webhook.podSecurityPolicyName" . }}
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

@@ -81,3 +81,12 @@ helm.sh/chart: {{ include "instana-autotrace-webhook.chart" . }}
 {{- define "is_openshift" }}
 {{- .Capabilities.APIVersions.Has "apps.openshift.io/v1" }}
 {{- end }}
+
+{{/*
+The name of the PodSecurityPolicy used.
+*/}}
+{{- define "instana-autotrace-webhook.podSecurityPolicyName" -}}
+{{- if .Values.rbac.psp.enabled -}}
+{{ default (include "instana-autotrace-webhook.fullname" .) .Values.rbac.psp.name }}
+{{- end -}}
+{{- end -}}

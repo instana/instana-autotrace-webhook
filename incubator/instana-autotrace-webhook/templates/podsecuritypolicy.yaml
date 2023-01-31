@@ -1,0 +1,30 @@
+{{- if .Values.rbac.enabled }}
+{{- if .Values.rbac.psp.enabled }}
+---
+kind: PodSecurityPolicy
+apiVersion: policy/v1beta1
+metadata:
+  name: {{ template "instana-autotrace-webhook.podSecurityPolicyName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+spec:
+  privileged: false
+  volumes:
+    - secret
+  allowPrivilegeEscalation: false
+  hostNetwork: true
+  hostPorts:
+    - min: 0
+      max: 65535
+  hostPID: true
+  runAsUser:
+    rule: "MustRunAsNonRoot"
+  seLinux:
+    rule: "RunAsAny"
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+{{- end }}
+{{- end }}
