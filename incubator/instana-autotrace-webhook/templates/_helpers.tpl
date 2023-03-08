@@ -90,3 +90,11 @@ The name of the PodSecurityPolicy used.
 {{ default (include "instana-autotrace-webhook.fullname" .) .Values.rbac.psp.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "kubeVersion" -}}
+{{- if (regexMatch "\\d+\\.\\d+\\.\\d+-(?:eks|gke).+" .Capabilities.KubeVersion.Version) -}}
+  {{- regexFind "\\d+\\.\\d+\\.\\d+" .Capabilities.KubeVersion.Version -}}
+{{- else -}}
+  {{- printf .Capabilities.KubeVersion.Version }}
+{{- end -}}
+{{- end -}}

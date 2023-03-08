@@ -1,10 +1,5 @@
-{{- if and .Values.rbac.enabled .Values.rbac.psp.enabled }}
-{{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
-{{- if (regexMatch "\\d+\\.\\d+\\.\\d+-(?:eks|gke).+" $kubeVersion) -}}
-  {{- $kubeVersion = regexFind "\\d+\\.\\d+\\.\\d+" $kubeVersion -}}
-{{- end -}}
-
-{{- if semverCompare "< 1.25.x" $kubeVersion }}
+{{- if and (and .Values.rbac.enabled .Values.rbac.psp.enabled) (not .Values.openshift.enabled) }}
+{{- if semverCompare "< 1.25.x" (include "kubeVersion" .) }}
 ---
 kind: PodSecurityPolicy
 apiVersion: policy/v1beta1
