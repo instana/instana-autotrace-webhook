@@ -5,7 +5,7 @@ metadata:
   labels:
 {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
 {{- if .Values.webhook.service.additionalLabels }}
-{{ toYaml .Values.webhook.service.additionalLabels | indent 6 }}
+{{ toYaml .Values.webhook.service.additionalLabels | indent 4 }}
 {{- end }}
   annotations:
 {{- if .Values.openshift.enabled }}
