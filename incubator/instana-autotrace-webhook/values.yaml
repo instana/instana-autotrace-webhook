@@ -15,7 +15,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:ea7515f0de85c519de0dc016ff6a2dadfb118068e1e9111dec46b1d7bef342f1
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:a58d312775716861d7d4946855f157541bf8cf59679f2ace3a1f64c4f6005867
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: containers-instana-io
@@ -60,7 +60,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:3b34211e256d039e6990d16a63a42bbf60848dabf042a009cf20ff6f689559c9
+    image: icr.io/instana/instrumentation@sha256:4eff4d71ea8f84baa41a32e3e5d72dfa780561b131008cc7bd54f8f8c724bc7c
     imagePullPolicy: IfNotPresent
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:
@@ -98,3 +98,73 @@ autotrace:
       - openshift-* # Guess what, Openshift!
       - pks-system # TKGI, formerly known as PKS
     namespaces: []
+    # Ignore namespaces via configuration of the MutatingWebhookConfiguration, k8s will not send requests for these namespaces to the webhook, wildcards are not supported here
+    selector:
+      - pks-system
+      - kube-system
+      - kube-public
+      - kube-node-lease
+      - openshift-apiserver
+      - openshift-apiserver-operator
+      - openshift-authentication
+      - openshift-authentication-operator
+      - openshift-cloud-controller-manager
+      - openshift-cloud-controller-manager-operator
+      - openshift-cloud-credential-operator
+      - openshift-cloud-network-config-controller
+      - openshift-cluster-csi-drivers
+      - openshift-cluster-machine-approver
+      - openshift-cluster-node-tuning-operator
+      - openshift-cluster-samples-operator
+      - openshift-cluster-storage-operator
+      - openshift-cluster-version
+      - openshift-config
+      - openshift-config-managed
+      - openshift-config-operator
+      - openshift-console
+      - openshift-console-operator
+      - openshift-console-user-settings
+      - openshift-controller-manager
+      - openshift-controller-manager-operator
+      - openshift-distributed-tracing
+      - openshift-dns
+      - openshift-dns-operator
+      - openshift-etcd
+      - openshift-etcd-operator
+      - openshift-host-network
+      - openshift-image-registry
+      - openshift-infra
+      - openshift-ingress
+      - openshift-ingress-canary
+      - openshift-ingress-operator
+      - openshift-insights
+      - openshift-kni-infra
+      - openshift-kube-apiserver
+      - openshift-kube-apiserver-operator
+      - openshift-kube-controller-manager
+      - openshift-kube-controller-manager-operator
+      - openshift-kube-scheduler
+      - openshift-kube-scheduler-operator
+      - openshift-kube-storage-version-migrator
+      - openshift-kube-storage-version-migrator-operator
+      - openshift-machine-api
+      - openshift-machine-config-operator
+      - openshift-marketplace
+      - openshift-monitoring
+      - openshift-multus
+      - openshift-network-diagnostics
+      - openshift-network-operator
+      - openshift-node
+      - openshift-nutanix-infra
+      - openshift-oauth-apiserver
+      - openshift-openstack-infra
+      - openshift-operator-lifecycle-manager
+      - openshift-operators
+      - openshift-operators-redhat
+      - openshift-ovirt-infra
+      - openshift-route-controller-manager
+      - openshift-sdn
+      - openshift-service-ca
+      - openshift-service-ca-operator
+      - openshift-user-workload-monitoring
+      - openshift-vsphere-infra
