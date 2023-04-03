@@ -114,6 +114,10 @@ spec:
           value: {{ .Values.autotrace.ingress_nginx.status_allow | quote }}
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
           value: {{ .Values.autotrace.libinstana_init.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_INIT_MEMORY_LIMIT
+          value: {{ .Values.autotrace.initContainer.memoryLimit | quote }}
+        - name: INSTANA_AUTOTRACE_INIT_CPU_LIMIT
+          value: {{ .Values.autotrace.initContainer.cpuLimit | quote }}
         - name: LOGGING_LEVEL_ROOT
 {{- if .Values.webhook.debug }}
           value: DEBUG
