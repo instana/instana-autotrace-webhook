@@ -61,6 +61,13 @@ spec:
           capabilities:
             drop:
               - all
+{{- if not .Values.openshift.enabled }}
+          seccompProfile:
+            type: RuntimeDefault
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+{{- end }}
         resources:
 {{ toYaml .Values.webhook.pod.resources | indent 10 }}
         env:
