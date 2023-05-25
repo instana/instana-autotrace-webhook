@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.249.2
+
+- Update the instana Gem to 1.209.7
+
 ## 1.249.1
 
 
