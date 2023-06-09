@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.250.2
+
+- Update the instana Gem to 1.209.8
+- Update the .NET Core dependencies to 1.250.3
+
 ## 1.250.1
 
 - Update the @instana/collector Node.js package to 2.23.0
