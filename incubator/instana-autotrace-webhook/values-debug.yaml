@@ -2,7 +2,7 @@
 # developing against locally built images and pushed to the local registry to be used
 # with minikube
 webhook:
-  image: myregistry:5000/containers.instana.io/instana/release/agent/instana-autotrace-webhook:local
+  image: myregistry:5000/instana-autotrace-webhook:local
   debug: true
 
 autotrace:
