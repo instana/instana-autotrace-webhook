@@ -15,7 +15,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:35337af82d92fa30607a5a8d59101fc8c35a1696efa62305454d84c0507700cd
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:533caf17310eff46ff57b0242b017ce2a87d8e0e0b648b127c7841a11354e34d
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: containers-instana-io
@@ -37,9 +37,6 @@ webhook:
     affinity: {}
     tolerations: []
     port: 42650
-    # Ensure that, in case of overlay networks, we bind to the host network, or the control plane
-    # won't be able to call into this webhook
-    hostNetwork: true # Ignored unless rbac.enabled=true
     # This security context is carried verbatim to the security context of the webhook pod
     securityContext:
     ### Better not to specify CPU resource limits: the WebHook, being a Spring-based app,
@@ -60,7 +57,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:52a5e9cfbaf2afd6cb52f191850f10499892e7801bad2c0e54d3068a53a2553e
+    image: icr.io/instana/instrumentation@sha256:d362bfafc08cc0792f207d37a56608dbba6b34f1f33055614395c26235ce8f9b
     imagePullPolicy: IfNotPresent
     # This security context is carried verbatim to the security context of all instrumentation init containers
     securityContext:

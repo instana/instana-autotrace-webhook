@@ -31,12 +31,6 @@ rules:
   resources: ["deploymentconfigs"]
   resourceNames: ["*"]
   verbs: ["get", "list", "watch"]
-{{ if .Values.webhook.pod.hostNetwork }}
-- apiGroups: ["security.openshift.io"]
-  resourceNames: ["hostnetwork"]
-  resources: ["securitycontextconstraints"]
-  verbs: ["use"]
-{{- end }}
 {{- if .Values.rbac.psp.enabled}}
 {{- if semverCompare "< 1.25.x" (include "kubeVersion" .) }}
 - apiGroups: ["policy"]
