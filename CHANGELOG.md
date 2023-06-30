@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.252.0
+
+- Update the manual trigger to 1.0.7
+- Update the @instana/collector Node.js package to 2.25.3
+
 ## 1.251.8
 
 
