@@ -164,18 +164,6 @@ If you do _not_ see logs like these, then very likely there is a problem with th
 
 The logs of your `kube-apiserver` will report on whether the Instana AutoTrace WebHook is being invoked and, if so, what is the outcome.
 
-### OpenShift `runAsUser` must be in range
-
-On OpenShift, the Security Context User ID must be within a specific range. By default, the user id `1001` is used, but
-that might not get accepted. You will see errors such as:
-
-```
-... is forbidden: unable to validate against any security context constraint: [spec.initContainers[0].securityContext.runAsUser: Invalid value: 1001: must be in the ranges: [1000600000, 1000609999]]'
-```
-
-If that happens, use the Helm property `--set autotrace.instrumentation.securityContext.runAsUser=<id>` and pick a valid
-ID that lies in the expected range.
-
 ### (Not so) common issues
 
 #### No network connectivity between kube-apiserver and the instana-autotrace-webhook pods
