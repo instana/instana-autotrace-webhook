@@ -1,4 +1,3 @@
-{{- if or .Values.rbac.enabled .Values.openshift.enabled }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -7,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+{{- if or .Values.rbac.enabled .Values.openshift.enabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -15,21 +15,8 @@ metadata:
   labels:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
 rules:
-- apiGroups: ["admissionregistration.k8s.io"]
-  resources: ["mutatingwebhookconfigurations"]
-  resourceNames: ["*"]
-  verbs: ["get", "list", "watch", "patch"]
-- apiGroups: ["apps"]
-  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
-  resourceNames: ["*"]
-  verbs: ["get", "list", "watch"]
 - apiGroups: [""]
-  resources: ["pods", "configmaps"]
-  resourceNames: ["*"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["apps.openshift.io"]
-  resources: ["deploymentconfigs"]
-  resourceNames: ["*"]
+  resources: ["secrets", "configmaps"]
   verbs: ["get", "list", "watch"]
 {{- if .Values.rbac.psp.enabled}}
 {{- if semverCompare "< 1.25.x" (include "kubeVersion" .) }}

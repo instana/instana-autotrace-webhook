@@ -35,11 +35,7 @@ spec:
 {{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
 {{- end }}
     spec:
-{{- if or .Values.rbac.enabled .Values.openshift.enabled }}
       serviceAccountName: {{ .Release.Name }}
-{{- else }}
-      serviceAccountName: default
-{{- end }}
       securityContext:
 {{- if .Values.webhook.pod.securityContext }}
 {{ toYaml .Values.webhook.pod.securityContext | indent 8 }}
