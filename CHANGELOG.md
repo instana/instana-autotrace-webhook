@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.262.4
+
+- Update the .NET Core dependencies to 1.262.3
+
 ## 1.262.3
 
 - Update the .NET Core dependencies to 1.262.2
