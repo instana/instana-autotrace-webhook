@@ -1,0 +1,36 @@
+{{- if .Values.autotrace.instrumentation.prepullImage }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: instana-mutating-webhook-image-prepuller
+  labels:
+{{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+{{- if .Values.webhook.deployment.additionalAnnotations }}
+  annotations:
+{{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
+{{- end }}
+spec:
+  selector:
+    matchLabels:
+      name: instana-mutating-webhook-image-prepuller
+  template:
+    metadata:
+      labels:
+        name: instana-mutating-webhook-image-prepuller
+{{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
+        instana-autotrace-ignore: "true"
+{{- if .Values.webhook.pod.additionalAnnotations }}
+      annotations:
+{{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
+{{- end }}
+    spec:
+      initContainers:
+        - name: prepuller
+          image: {{ .Values.autotrace.instrumentation.image | quote }}
+          command: ['sh', '-c', 'echo Image is prepulled && sleep 3600']
+      # Use the pause container to ensure the Pod goes into a `Running` phase
+      # but doesn't take up resource on the cluster
+      containers:
+        - name: pause
+          image: gcr.io/google_containers/pause
+{{- end }}
