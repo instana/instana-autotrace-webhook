@@ -5,11 +5,7 @@ It will automatically instrument:
   - Node.js, .NET Core, Ruby & Python applications via LD_PRELOAD
 {{- else }}
   {{- if .Values.autotrace.nodejs.enabled }}
-    {{- if .Values.autotrace.nodejs.pin1x }}
-    - Node.js applications (pinned to @instana/collector@1.x)
-    {{- else }}
     - Node.js applications
-    {{- end }}
   {{- end }}
   {{- if .Values.autotrace.netcore.enabled }}
     - .NET Core applications
