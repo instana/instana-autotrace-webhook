@@ -88,7 +88,7 @@ autotrace:
   libinstana_init:
     enabled: true
   initContainer:
-    memoryLimit: 64Mi
+    memoryLimit: 128Mi
     cpuLimit: 250m
   # Namespaces that are always ignored, no matter what
   exclude:
