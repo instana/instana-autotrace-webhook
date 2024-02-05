@@ -1,4 +1,4 @@
-{{- if .Values.autotrace.instrumentation.prepullImage }}
+{{- if and .Values.autotrace.instrumentation.prepullImage (not .Values.awseksfargate.enabled) }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:

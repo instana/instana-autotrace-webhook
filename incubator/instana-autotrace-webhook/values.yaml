@@ -9,6 +9,10 @@ rbac:
     name: null
 openshift:
   enabled: false # Deploying on OpenShift implies rbac.enabled=true
+awseksfargate:
+  enabled: false # Deploying on AWS EKS Fargate
+  instanaAgentKey: null
+  instanaEndpointURL: null
 webhook:
   remoteDebug: false
   debug: false
