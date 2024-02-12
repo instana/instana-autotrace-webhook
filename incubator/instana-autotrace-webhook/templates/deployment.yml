@@ -118,7 +118,7 @@ spec:
           value: {{ .Values.autotrace.initContainer.cpuLimit | quote }}
 {{- if .Values.awseksfargate.enabled }}
         - name: INSTANA_ENVIRONMENT_AWSEKSFARGATE
-          value: true
+          value: "true"
         - name: INSTANA_AGENT_KEY
           value: {{ .Values.awseksfargate.instanaAgentKey | quote }}
         - name: INSTANA_ENDPOINT_URL
