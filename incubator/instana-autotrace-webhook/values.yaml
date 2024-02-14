@@ -19,7 +19,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:4cb53d0d6e7a85a088262e0724c3ff84a5ef73d508bdd8acf7c4d3704b8486a3
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:490c655721105e1157b206d00dacb2e8c2e75ffe5a56b48e66d4155bd368e23a
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: containers-instana-io
@@ -61,7 +61,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:e3fd9668624c9fb9f0f753c5e8a0411f77a1a7237b39d9cdb35c64fef16db002
+    image: icr.io/instana/instrumentation@sha256:12a33c0349bb7d1857ac0ee7c4c61fd27c0c9552bf1dfcf9f3e0d011287748c5
     imagePullPolicy: IfNotPresent
     prepullImage: false
     # This security context is carried verbatim to the security context of all instrumentation init containers
@@ -94,6 +94,8 @@ autotrace:
   initContainer:
     memoryLimit: 128Mi
     cpuLimit: 250m
+    memoryRequest: 16Mi
+    cpuRequest: 150m
   # Namespaces that are always ignored, no matter what
   exclude:
     builtin_namespaces:

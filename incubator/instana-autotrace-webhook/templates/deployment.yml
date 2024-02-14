@@ -116,6 +116,10 @@ spec:
           value: {{ .Values.autotrace.initContainer.memoryLimit | quote }}
         - name: INSTANA_AUTOTRACE_INIT_CPU_LIMIT
           value: {{ .Values.autotrace.initContainer.cpuLimit | quote }}
+        - name: INSTANA_AUTOTRACE_INIT_MEMORY_REQUEST
+          value: {{ .Values.autotrace.initContainer.memoryRequest | quote }}
+        - name: INSTANA_AUTOTRACE_INIT_CPU_REQUEST
+          value: {{ .Values.autotrace.initContainer.cpuRequest | quote }}
 {{- if .Values.awseksfargate.enabled }}
         - name: INSTANA_ENVIRONMENT_AWSEKSFARGATE
           value: "true"
