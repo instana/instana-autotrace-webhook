@@ -84,6 +84,16 @@ spec:
           value: {{ toJson .Values.autotrace.instrumentation.securityContext | default "{}" | quote }}
 {{- end }}
 {{- end }}
+        - name: INSTANA_INSTRUMENT_NODEJS
+          value: {{ .Values.autotrace.instrumentation.manual.nodejs | quote }}
+        - name: INSTANA_INSTRUMENT_NETCORE
+          value: {{ .Values.autotrace.instrumentation.manual.netcore | quote }}
+        - name: INSTANA_INSTRUMENT_NGINX
+          value: {{ .Values.autotrace.instrumentation.manual.nginx | quote }}
+        - name: INSTANA_INSTRUMENT_PYTHON
+          value: {{ .Values.autotrace.instrumentation.manual.python | quote }}
+        - name: INSTANA_INSTRUMENT_RUBY
+          value: {{ .Values.autotrace.instrumentation.manual.ruby | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
           value: {{ .Values.autotrace.instrumentation.image | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
