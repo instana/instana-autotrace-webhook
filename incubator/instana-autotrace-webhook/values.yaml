@@ -19,7 +19,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:0be6cbbba7b4e78a9e97dce33ad348a021fb52f9fa1ba1582b2e640c3ff0ef6c
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:d889dc0b087cea79514a26152cc0dd89865d5553f7085474e9e16b65da3aff1d
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: containers-instana-io
