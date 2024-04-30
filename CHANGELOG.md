@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.272.1
+
+- Update the .NET Core dependencies to 1.272.1
+
 ## 1.272.0
 
 - Update the instana Gem to 1.214.3
