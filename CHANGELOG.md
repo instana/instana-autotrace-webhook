@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.273.4
+
+- Update the .NET Core dependencies to 1.273.1
+
 ## 1.273.3
 
 
