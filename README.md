@@ -64,6 +64,7 @@ The `instana-autotrace-version` label will be applied to the Pods, ReplicaSets, 
 - The Instana AutoTrace WebHook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace WebHook to do its magic.
 - Only `linux/amd64` Kubernetes nodes are currently supported.
+- In your Kubernetes setup, updating the webhook via Helm doesn't automatically pull the latest image, leading to potential mismatches between new code and old images. To address this, uninstalling and reinstalling the webhook can ensure it uses the latest default values and images, but previously deployed workloads may still require redeployment to apply the updated instrumentation.
 
 ## Configuration
 
