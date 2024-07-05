@@ -41,7 +41,11 @@ spec:
 {{ toYaml .Values.webhook.pod.securityContext | indent 8 }}
 {{- end }}
       imagePullSecrets:
+{{- if (gt (len .Values.webhook.imagePullSecrets) 0) }}
 {{ toYaml .Values.webhook.imagePullSecrets | indent 8 }}
+{{- else }}
+      - name: containers-instana-io
+{{- end }}
       containers:
       - name: instana-autotrace-webhook
         image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image | quote }}

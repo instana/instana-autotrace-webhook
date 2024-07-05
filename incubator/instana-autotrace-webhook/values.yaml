@@ -21,8 +21,12 @@ webhook:
     caBundle:
   image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:aac5b23e0311c9abb3ae19b4f34319f7732230a058ef99446ddd7f20c7f421d3
   imagePullPolicy: IfNotPresent
-  imagePullSecrets:
-    - name: containers-instana-io
+  # If the imagePullSecrets is left unspecified, imagePullSecrets will be constructed from imagePullCredentials with the name containers-instana-io
+  # If the imagePullSecrets is specified, imagePullCredentials.password is not required
+  imagePullSecrets: []
+  ### Example:
+  # imagePullSecrets:
+  #   - name: my_awesome_secret_instead
   imagePullCredentials:
     registry: containers.instana.io
     username: _

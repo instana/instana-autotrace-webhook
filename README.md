@@ -18,6 +18,8 @@ helm install --create-namespace --namespace instana-autotrace-webhook instana-au
   --set webhook.imagePullCredentials.password=<download_key>
 ```
 
+Alternative to providing the `<download_key>`, it's possible to provide the imagePullSecret by modifying the `values.yaml` file and specifying the secret under `webhook.imagePullSecrets`.
+
 **Important:** When installing on OpenShift, you _must_ set additionally `--set openshift.enabled=true`.
 
 ## Verify it works

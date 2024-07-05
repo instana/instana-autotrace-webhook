@@ -47,18 +47,16 @@ helm.sh/chart: {{ include "instana-autotrace-webhook.chart" . }}
 {{- end -}}
 
 {{- define "instana-autotrace-webhook.webhook.imagePullSecret" }}
-{{- with .Values.webhook.imagePullCredentials }}
-{{- if not .registry }}
+{{- if not .Values.webhook.imagePullCredentials.registry }}
 {{- fail "The 'webhook.imagePullCredentials.registry' setting must be provided" }}
 {{- end }}
-{{- if not .username }}
+{{- if not .Values.webhook.imagePullCredentials.username }}
 {{- fail "The 'webhook.imagePullCredentials.username' setting must be provided" }}
 {{- end }}
-{{- if not .password }}
-{{- fail "The 'webhook.imagePullCredentials.password' setting must be provided" }}
+{{- if and (not .Values.webhook.imagePullCredentials.password) (eq (len .Values.webhook.imagePullSecrets) 0)}}
+{{- fail "The 'webhook.imagePullCredentials.password' or 'webhook.imagePullSecrets' setting must be provided" }}
 {{- end }}
 {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .registry .username .password (printf "%s:%s" .username .password | b64enc) | b64enc }}
-{{- end }}
 {{- end }}
 
 {{- define "k8s-admission-controller-api-version" }}
