@@ -65,7 +65,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:81b4f95a0b7e0475eee704d7e4552d0de190317f2d5779e0f60ae086cd2c8b03
+    image: icr.io/instana/instrumentation@sha256:1f781a0ac7126476bef45108416b86ada77e253e30b424ced4203f7410e88bca
     imagePullPolicy: IfNotPresent
     prepullImage: false
     manual:
