@@ -19,7 +19,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:9de73de63dfc329c177edaeccc6074823d4ee08fc31ca4df17ebc8d0144d5a8e
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:05873865bacd48e00153b92a72a874b79ae701b40c763e273764fbc8d81bf596
   imagePullPolicy: IfNotPresent
   # If the imagePullSecrets is left unspecified, imagePullSecrets will be constructed from imagePullCredentials with the name containers-instana-io
   # If the imagePullSecrets is specified, imagePullCredentials.password is not required
@@ -65,7 +65,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:198ce3a58d2fb1fc5f116cae72022d1d8b2feb797fe925cf9503f34aaadf150f
+    image: icr.io/instana/instrumentation@sha256:f850eb9699d34e2b79ac7f4cdd971a9178f2a69bc167355c4b579be2e3a78b5c
     imagePullPolicy: IfNotPresent
     prepullImage: false
     manual:
