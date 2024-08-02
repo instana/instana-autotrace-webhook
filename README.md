@@ -133,13 +133,13 @@ We are likely to grow that list over time, and if you modify it, your modificati
 
 Resources that have the `instana-autotrace: "true"` label, will be instrumented regardless of namespace exclusion.
 
-The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
+The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, StatefulSets, and Namespaces as well as in nested Pod templates and in standalone Pods.
 
 ### Ignoring resources
 
 Resources that have the `instana-autotrace: "false"` label, will be ignored regardless other settings.
 
-The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
+The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, StatefulSets, and Namespaces as well as in nested Pod templates and in standalone Pods.
 
 ### Minimize required ephemeral storage
 

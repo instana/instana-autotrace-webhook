@@ -16,7 +16,7 @@ metadata:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
 rules:
 - apiGroups: [""]
-  resources: ["secrets", "configmaps"]
+  resources: ["secrets", "configmaps", "namespaces"]
   verbs: ["get", "list", "watch"]
 {{- if .Values.rbac.psp.enabled}}
 {{- if semverCompare "< 1.25.x" (include "kubeVersion" .) }}
