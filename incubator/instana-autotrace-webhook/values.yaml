@@ -75,13 +75,14 @@ autotrace:
       ruby: false
       python: false
     # This security context is carried verbatim to the security context of all instrumentation init containers
-    securityContext:
-      runAsNonRoot: true
-      privileged: false
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - all
+    # It is not defined by default and inherits pod's securityContext. If required to define, it can be done here.
+    securityContext: null
+    # runAsNonRoot: true
+    # privileged: false
+    # allowPrivilegeEscalation: false
+    # capabilities:
+    #   drop:
+    #     - all
   ingress_nginx:
     enabled: false
     status_enabled: false
