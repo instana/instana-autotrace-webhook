@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.282.6
+
+- Update the @instana/collector Node.js package to 3.19.0
+
 ## 1.282.5
 
 
