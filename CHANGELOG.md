@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.283.7
+
+- Update the @instana/collector Node.js package to 3.20.1
+
 ## 1.283.6
 
 - Update the @instana/collector Node.js package to 3.20.0
