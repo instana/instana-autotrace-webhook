@@ -80,6 +80,8 @@ spec:
           value: {{ .Chart.AppVersion }}
         - name: INSTANA_AUTOTRACE_IGNORED_NAMESPACES
           value: {{ join "," (concat .Values.autotrace.exclude.builtin_namespaces .Values.autotrace.exclude.namespaces)}}
+        - name: INSTANA_IGNORE
+          value: "true"
 {{- if .Values.autotrace.instrumentation.securityContext }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_SECURITY_CONTEXT
 {{- if .Values.openshift.enabled }}
