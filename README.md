@@ -1,6 +1,6 @@
-# Instana AutoTrace WebHook
+# Instana AutoTrace webhook
 
-The Instana AutoTrace WebHook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
+The Instana AutoTrace webhook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
 
 ## Requirements
 
@@ -48,7 +48,7 @@ If, on the other hand, you do _not_ see the `instana-autotrace-applied` labels a
 
 ## Updates
 
-The Instana AutoTrace WebHook does not currently have an automated way of upgrading the instrumentation that it will install.
+The Instana AutoTrace webhook does not currently have an automated way of upgrading the instrumentation that it will install.
 The instrumentation is delivered over the `instana/instrumentation` image (`icr.io/instana/instrumentation`).
 The `instana-autotrace-webhook` Helm chart will be regularly updated to use the newest `instana/instrumentation` image; so, to update the instrumentation to the latest and greatest version, you can upgrade the deployment with:
 
@@ -58,13 +58,13 @@ helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
   --reuse-values
 ```
 
-You can find out which version of the AutoTrace WebHook has been applied to which of your resources by looking up the `instana-autotrace-version` label.
+You can find out which version of the AutoTrace webhook has been applied to which of your resources by looking up the `instana-autotrace-version` label.
 The `instana-autotrace-version` label will be applied to the Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs.
 
 ## Gotchas
 
-- The Instana AutoTrace WebHook will take effect on _new_ Kubernetes resources.
-  That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace WebHook to do its magic.
+- The Instana AutoTrace webhook will take effect on _new_ Kubernetes resources.
+  That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace webhook to do its magic.
 - Only `linux/amd64` Kubernetes nodes are currently supported.
 - In your Kubernetes setup, updating the webhook via Helm doesn't automatically pull the latest image, leading to potential mismatches between new code and old images. To address this, uninstalling and reinstalling the webhook can ensure it uses the latest default values and images, but previously deployed workloads may still require redeployment to apply the updated instrumentation.
 
@@ -82,23 +82,23 @@ To enable the automatic instrumentation of `ingress-nginx` objects in your kuber
 
 ### Role-based Access Control
 
-In order to deploy the AutoTrace WebHook into a `ServiceAccount` guarded by a `ClusterRole` and matching `ClusterRoleBinding`, set the `rbac.enabled=true` flag when deploying the Helm chart.
+In order to deploy the AutoTrace webhook into a `ServiceAccount` guarded by a `ClusterRole` and matching `ClusterRoleBinding`, set the `rbac.enabled=true` flag when deploying the Helm chart.
 
 In addition to the RBAC, if you use Pod Security Policies, add `rbac.psp.enabled=true` to the Helm arguments.
 
 ### Container port
 
-In order to be reachable from Kubernetes' API server, the AutoTrace WebHook pod _must_ be hosted on the host network, and the deployment is configured to achieve that transparently.
+In order to be reachable from Kubernetes' API server, the AutoTrace webhook pod _must_ be hosted on the host network, and the deployment is configured to achieve that transparently.
 By default, the container will be bound to port `42650`.
-If something else on your nodes already uses port `42650`, causing the AutoTrace WebHook to go in a crash loop because it finds its port already bound, you can change the port using the `webhook.port` property.
+If something else on your nodes already uses port `42650`, causing the AutoTrace webhook to go in a crash loop because it finds its port already bound, you can change the port using the `webhook.port` property.
 
 ### Opt-in or opt-out
 
-In purely Instana fashion, the AutoTrace WebHook will instrument all containers in all pods.
+In purely Instana fashion, the AutoTrace webhook will instrument all containers in all pods.
 However, you may want to have more control over which resources are instrumented and which not.
-By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the AutoTrace WebHook will only modify pods, replica sets, stateful sets, daemon sets and deployments that carry the `instana-autotrace: "true"` label.
+By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the AutoTrace webhook will only modify pods, replica sets, stateful sets, daemon sets and deployments that carry the `instana-autotrace: "true"` label.
 
-Irrespective of the value of the `autotrace.opt_in`, the AutoTrace WebHook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
+Irrespective of the value of the `autotrace.opt_in`, the AutoTrace webhook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
 
 The `instana-autotrace: "false"` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, and StatefulSets, as well as in nested Pod templates and in standalone Pods.
 
@@ -162,9 +162,9 @@ It is possible to specify more than one flag and include instrumentation files f
 
 ## Troubleshooting
 
-If you do not see the Instana AutoTrace WebHook have effect on your _new_ Kubernetes resources, the steps to troubleshoot are the following.
+If you do not see the Instana AutoTrace webhook have effect on your _new_ Kubernetes resources, the steps to troubleshoot are the following.
 
-### Ensure the Instana AutoTrace WebHook is receiving requests
+### Ensure the Instana AutoTrace webhook is receiving requests
 
 Check the logs of the `instana-autotrace-webhook` pod.
 Using `kubectl`, you can launch the following command:
@@ -184,13 +184,13 @@ If you do _not_ see logs like these, then very likely there is a problem with th
 
 ### Check the Kube ApiServer logs
 
-The logs of your `kube-apiserver` will report on whether the Instana AutoTrace WebHook is being invoked and, if so, what is the outcome.
+The logs of your `kube-apiserver` will report on whether the Instana AutoTrace webhook is being invoked and, if so, what is the outcome.
 
 ### (Not so) common issues
 
 #### No network connectivity between kube-apiserver and the instana-autotrace-webhook pods
 
-The most common issue is that the `kube-apiserver` cannot reach the worker nodes running the `instana-autotrace-webhook` pods due to security policies, which prevents the Instana AutoTrace WebHook to work.
+The most common issue is that the `kube-apiserver` cannot reach the worker nodes running the `instana-autotrace-webhook` pods due to security policies, which prevents the Instana AutoTrace webhook to work.
 In this case, the solution is to change your network settings so that the `kube-apiserver` will be able to reach the `instana-autotrace-webhook` pods.
 How to achieve that is entirely dependent on your setup, so we cannot provided guidance on how to solve this case.
 
