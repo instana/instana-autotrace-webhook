@@ -104,6 +104,8 @@ spec:
           value: {{ .Values.autotrace.instrumentation.image | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
           value: {{ .Values.autotrace.instrumentation.imagePullPolicy | quote }}
+        - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_SECRET
+          value: {{ .Values.autotrace.instrumentation.imagePullSecret | quote }}
         - name: INSTANA_AUTOTRACE_OPT_IN
           value: {{ .Values.autotrace.opt_in | quote }}
         - name: INSTANA_AUTOTRACE_NODEJS
