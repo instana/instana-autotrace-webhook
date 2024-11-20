@@ -59,6 +59,12 @@ helm.sh/chart: {{ include "instana-autotrace-webhook.chart" . }}
 {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .Values.webhook.imagePullCredentials.registry .Values.webhook.imagePullCredentials.username .Values.webhook.imagePullCredentials.password (printf "%s:%s" .Values.webhook.imagePullCredentials.username .Values.webhook.imagePullCredentials.password | b64enc) | b64enc }}
 {{- end }}
 
+{{- define "instana-autotrace-webhook.init.imagePullSecret" }}
+{{- if and (and .Values.autotrace.instrumentation.imagePullCredentials.username .Values.autotrace.instrumentation.imagePullCredentials.password) .Values.autotrace.instrumentation.imagePullCredentials.registry }}
+{{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .Values.autotrace.instrumentation.imagePullCredentials.registry .Values.autotrace.instrumentation.imagePullCredentials.username .Values.autotrace.instrumentation.imagePullCredentials.password (printf "%s:%s" .Values.autotrace.instrumentation.imagePullCredentials.username .Values.autotrace.instrumentation.imagePullCredentials.password | b64enc) | b64enc }}
+{{- end }}
+{{- end }}
+
 {{- define "k8s-admission-controller-api-version" }}
 {{- if .Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1" }}
 {{- printf "v1" }}
