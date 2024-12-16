@@ -65,7 +65,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:b805eaa1b2502a8f77011e86d8d06c563b3511e327d7a601825a88eecdb61214
+    image: icr.io/instana/instrumentation@sha256:2fc0341a69654b03ed48dc17cfa7e6954adda890b628862cf6c52029dd986db6
     imagePullPolicy: IfNotPresent
     # The default instrumentation image doesn't require pull secret.
     # If you specify instrumentation image from a private registry, ensure to set the pull image secret or imagePullCredentials.
