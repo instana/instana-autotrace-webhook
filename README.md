@@ -96,7 +96,7 @@ If something else on your nodes already uses port `42650`, causing the AutoTrace
 
 In purely Instana fashion, the AutoTrace webhook will instrument all containers in all pods.
 However, you may want to have more control over which resources are instrumented and which not.
-By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the AutoTrace webhook will only modify pods, replica sets, stateful sets, daemon sets and deployments that carry the `instana-autotrace: "true"` label.
+By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the AutoTrace webhook will only modify Pods, ReplicaSet, StatefulSets, DaemonSet, Deployments or resources within the namespace that carry the `instana-autotrace: "true"` label.
 
 Irrespective of the value of the `autotrace.opt_in`, the AutoTrace webhook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
 
