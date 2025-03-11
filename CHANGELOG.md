@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.291.1
+
+
 ## 1.291.0
 
 - Update the @instana/collector Node.js package to 4.7.0
