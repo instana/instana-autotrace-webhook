@@ -158,6 +158,10 @@ spec:
 {{- else }}
           value: INFO
 {{- end }}
+{{- if .Values.webhook.netty.debug }}
+        - name: LOGGING_LEVEL_IO_NETTY
+          value: DEBUG
+{{- end }}
 {{- $javaToolOptions := ""  }}
 {{- if .Values.webhook.ssl.insecure }}
   {{- $javaToolOptions = "-Dcom.sun.net.ssl.checkRevocation=false " }}

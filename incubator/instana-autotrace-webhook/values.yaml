@@ -16,6 +16,8 @@ awseksfargate:
 webhook:
   remoteDebug: false
   debug: false
+  netty:
+    debug: false
   ssl:
     insecure: false
     caBundle:
