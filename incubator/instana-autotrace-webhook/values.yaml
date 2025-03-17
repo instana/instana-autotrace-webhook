@@ -21,7 +21,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:3571a493ac5ad8a348209eb1ef93c43e653e0e7af057d8dedcdaed7ef88871f9
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:e4d670693926162a6522fa4dde74ec46394cc0f62bd4964a3ee0e00835e0e903
   imagePullPolicy: IfNotPresent
   # If the imagePullSecrets is left unspecified, imagePullSecrets will be constructed from imagePullCredentials with the name containers-instana-io
   # If the imagePullSecrets is specified, imagePullCredentials.password is not required
@@ -116,9 +116,9 @@ autotrace:
   libinstana_init:
     enabled: true
   initContainer:
-    memoryLimit: 128Mi
+    memoryLimit: 256Mi
     cpuLimit: 250m
-    memoryRequest: 16Mi
+    memoryRequest: 64Mi
     cpuRequest: 150m
   # Namespaces that are always ignored, no matter what
   exclude:
