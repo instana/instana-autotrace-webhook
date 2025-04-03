@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.292.2
+
+- Update the .NET Core dependencies to 1.292.1
+
 ## 1.292.1
 
 
