@@ -182,7 +182,6 @@ spec:
 {{- if .Values.webhook.remoteDebug }}
         - containerPort: 5005
 {{- end }}
-{{- if .Values.webhook.pod.tolerations }}
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
@@ -199,6 +198,7 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 1
           failureThreshold: 3
+{{- if .Values.webhook.pod.tolerations }}
       tolerations:
 {{- toYaml .Values.webhook.tolerations | nindent 8 }}
 {{- end }}
