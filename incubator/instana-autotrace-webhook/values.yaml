@@ -21,7 +21,7 @@ webhook:
   ssl:
     insecure: false
     caBundle:
-  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:8410866946e84003863d9fbee1d4645a7e816ef69cd5fb4b58ca3a73d9cc0f13
+  image: containers.instana.io/instana/release/agent/instana-autotrace-webhook@sha256:16ab315a486305e46b677d4feb06a749af2f1a4daf6c9af662644f1853cf7ea1
   imagePullPolicy: IfNotPresent
   # If the imagePullSecrets is left unspecified, imagePullSecrets will be constructed from imagePullCredentials with the name containers-instana-io
   # If the imagePullSecrets is specified, imagePullCredentials.password is not required
@@ -67,7 +67,7 @@ autotrace:
   opt_in: false
   failurePolicy: Ignore # We do not want to cause any trouble in scheduling; for local testing, use 'Fail'
   instrumentation:
-    image: icr.io/instana/instrumentation@sha256:981268370acd86c847bf049d1a7f80b815e55c00203001abe5343ac2d56508dd
+    image: icr.io/instana/instrumentation@sha256:3bc5af4d90aa7d6e4ad44b9e446f72f0d78895255e5970fde3b6ea4e7218cb66
     imagePullPolicy: IfNotPresent
     # The default instrumentation image doesn't require pull secret.
     # If you specify instrumentation image from a private registry, ensure to set the pull image secret or imagePullCredentials.
