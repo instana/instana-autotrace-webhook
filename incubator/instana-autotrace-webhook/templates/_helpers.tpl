@@ -102,3 +102,37 @@ The name of the PodSecurityPolicy used.
   {{- printf .Capabilities.KubeVersion.Version }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+The full webhook image with the version
+Global tag is always respected, then the old way of setting the version within the image
+Otherwise, default to the current version of the webhook
+*/}}
+{{- define "instana-autotrace-webhook.image" -}}
+{{- $repo := index .Values.webhook "image" -}}
+
+{{- if .Values.global.version -}}
+  {{- printf "%s:%s" (regexReplaceAll "([@:]).*$" $repo "" ) .Values.global.version -}}
+{{- else if or (contains ":" $repo) (contains "@" $repo) -}}
+  {{- $repo | trim }}
+{{- else -}}
+  {{- printf "%s:%s" $repo .Chart.AppVersion -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The full instrumentation image with the version
+Global tag is always respected, then the old way of setting the version within the image
+Otherwise, default to the current version of the webhook
+*/}}
+{{- define "instrumentatation.image" -}}
+{{- $repo := index .Values.autotrace.instrumentation "image" -}}
+
+{{- if .Values.global.version -}}
+  {{- printf "%s:%s" (regexReplaceAll "([@:]).*$" $repo "" ) .Values.global.version -}}
+{{- else if or (contains ":" $repo) (contains "@" $repo) -}}
+  {{- $repo | trim }}
+{{- else -}}
+  {{- printf "%s:%s" $repo .Chart.AppVersion -}}
+{{- end -}}
+{{- end -}}

@@ -48,7 +48,7 @@ spec:
 {{- end }}
       containers:
       - name: instana-autotrace-webhook
-        image: {{ required "You must provide a value for 'webhook.image'" .Values.webhook.image | quote }}
+        image: {{ include "instana-autotrace-webhook.image" . }}
         imagePullPolicy: {{ .Values.webhook.imagePullPolicy }}
         securityContext:
           privileged: false
@@ -105,7 +105,7 @@ spec:
         - name: INSTANA_INSTRUMENT_RUBY
           value: {{ .Values.autotrace.instrumentation.manual.ruby | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
-          value: {{ .Values.autotrace.instrumentation.image | quote }}
+          value: {{ include "instrumentatation.image" . }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
           value: {{ .Values.autotrace.instrumentation.imagePullPolicy | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_SECRET
