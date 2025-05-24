@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.296.3
+
+
 ## 1.296.2
 
 - Update the Instana Python package to 3.4.1
