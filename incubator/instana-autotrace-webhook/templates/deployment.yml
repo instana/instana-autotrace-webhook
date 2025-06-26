@@ -105,7 +105,7 @@ spec:
         - name: INSTANA_INSTRUMENT_RUBY
           value: {{ .Values.autotrace.instrumentation.manual.ruby | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
-          value: {{ include "instrumentatation.image" . }}
+          value: {{ include "instrumentation.image" . }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
           value: {{ .Values.autotrace.instrumentation.imagePullPolicy | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_SECRET

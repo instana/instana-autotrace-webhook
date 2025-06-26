@@ -111,12 +111,27 @@ Otherwise, default to the current version of the webhook
 {{- define "instana-autotrace-webhook.image" -}}
 {{- $repo := index .Values.webhook "image" -}}
 
+{{/* Get the image name (last part after final slash) */}}
+{{- $imageName := regexFind "[^/]+$" $repo -}}
+
+{{/* Get everything before the image name (registry + path) */}}
+{{- $registryPath := trimSuffix $imageName $repo -}}
+
+{{/* Check if the image name has a tag or digest */}}
+{{- $hasTagOrDigest := or (contains ":" $imageName) (contains "@" $imageName) -}}
+
+{{/* Remove any existing tag from the image name */}}
+{{- $imageNameWithoutTag := regexReplaceAll "[:@].*$" $imageName "" -}}
+
 {{- if .Values.global.version -}}
-  {{- printf "%s:%s" (regexReplaceAll "([@:]).*$" $repo "" ) .Values.global.version -}}
-{{- else if or (contains ":" $repo) (contains "@" $repo) -}}
-  {{- $repo | trim }}
+  {{/* Use global version */}}
+  {{- printf "%s%s:%s" $registryPath $imageNameWithoutTag .Values.global.version -}}
+{{- else if $hasTagOrDigest -}}
+  {{/* Keep the original repo with its tag/digest */}}
+  {{- $repo | trim -}}
 {{- else -}}
-  {{- printf "%s:%s" $repo .Chart.AppVersion -}}
+  {{/* Use Chart.AppVersion as tag */}}
+  {{- printf "%s%s:%s" $registryPath $imageNameWithoutTag .Chart.AppVersion -}}
 {{- end -}}
 {{- end -}}
 
@@ -125,14 +140,29 @@ The full instrumentation image with the version
 Global tag is always respected, then the old way of setting the version within the image
 Otherwise, default to the current version of the webhook
 */}}
-{{- define "instrumentatation.image" -}}
+{{- define "instrumentation.image" -}}
 {{- $repo := index .Values.autotrace.instrumentation "image" -}}
 
+{{/* Get the image name (last part after final slash) */}}
+{{- $imageName := regexFind "[^/]+$" $repo -}}
+
+{{/* Get everything before the image name (registry + path) */}}
+{{- $registryPath := trimSuffix $imageName $repo -}}
+
+{{/* Check if the image name has a tag or digest */}}
+{{- $hasTagOrDigest := or (contains ":" $imageName) (contains "@" $imageName) -}}
+
+{{/* Remove any existing tag from the image name */}}
+{{- $imageNameWithoutTag := regexReplaceAll "[:@].*$" $imageName "" -}}
+
 {{- if .Values.global.version -}}
-  {{- printf "%s:%s" (regexReplaceAll "([@:]).*$" $repo "" ) .Values.global.version -}}
-{{- else if or (contains ":" $repo) (contains "@" $repo) -}}
-  {{- $repo | trim }}
+  {{/* Use global version */}}
+  {{- printf "%s%s:%s" $registryPath $imageNameWithoutTag .Values.global.version -}}
+{{- else if $hasTagOrDigest -}}
+  {{/* Keep the original repo with its tag/digest */}}
+  {{- $repo | trim -}}
 {{- else -}}
-  {{- printf "%s:%s" $repo .Chart.AppVersion -}}
+  {{/* Use Chart.AppVersion as tag */}}
+  {{- printf "%s%s:%s" $registryPath $imageNameWithoutTag .Chart.AppVersion -}}
 {{- end -}}
 {{- end -}}
