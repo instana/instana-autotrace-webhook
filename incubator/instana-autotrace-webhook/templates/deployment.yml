@@ -40,10 +40,11 @@ spec:
 {{- if .Values.webhook.pod.securityContext }}
 {{ toYaml .Values.webhook.pod.securityContext | indent 8 }}
 {{- end }}
-      imagePullSecrets:
 {{- if (gt (len .Values.webhook.imagePullSecrets) 0) }}
+      imagePullSecrets:
 {{ toYaml .Values.webhook.imagePullSecrets | indent 8 }}
-{{- else }}
+{{- else if (hasPrefix "containers.instana.io/" .Values.webhook.image) }}
+      imagePullSecrets:
       - name: containers-instana-io
 {{- end }}
       containers:
