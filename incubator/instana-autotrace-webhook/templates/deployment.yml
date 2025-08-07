@@ -36,6 +36,9 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ .Release.Name }}
+{{- if .Values.webhook.priorityClass.name }}
+      priorityClassName: {{ .Values.webhook.priorityClass.name }}
+{{- end }}
       securityContext:
 {{- if .Values.webhook.pod.securityContext }}
 {{ toYaml .Values.webhook.pod.securityContext | indent 8 }}

@@ -1,7 +1,7 @@
 # Default values for instana-autotrace-webhook.
 
 global:
-  version: 1.301.1
+  version: 1.301.2
 rbac:
   enabled: true # Setting openshift.enabled=true implies rbac.enabled=true
   psp: # Ignored unless rbac.enabled == true
@@ -23,6 +23,8 @@ webhook:
   ssl:
     insecure: false
     caBundle:
+  priorityClass:
+    name:
   image: containers.instana.io/instana/release/agent/instana-autotrace-webhook
   imagePullPolicy: IfNotPresent
   # If the imagePullSecrets is left unspecified, imagePullSecrets will be constructed from imagePullCredentials with the name containers-instana-io
