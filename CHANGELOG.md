@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.301.4
+
+- Update the Instana Python package to 3.7.1
+
 ## 1.301.3
 
 - Update the @instana/collector Node.js package to 4.21.3
