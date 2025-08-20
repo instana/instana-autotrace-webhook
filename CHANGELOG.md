@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.302.7
+
+
 ## 1.302.6
 
 - Update the .NET Core dependencies to 1.302.1
