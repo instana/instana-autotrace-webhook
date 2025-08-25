@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.302.10
+
+
 ## 1.302.9
 
 - Update the @instana/collector Node.js package to 4.23.0
