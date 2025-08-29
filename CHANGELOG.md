@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.303.2
+
+- Update the Instana Python package to 3.8.1
+
 ## 1.303.1
 
 - Update the Instana Python package to 3.8.0
