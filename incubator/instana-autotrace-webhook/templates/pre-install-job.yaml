@@ -1,0 +1,39 @@
+# Pre-install job to clean up existing secrets without Helm ownership annotations
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-cleanup-orphans
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-9"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+  labels:
+    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: {{ .Release.Name }}-cleanup-orphans
+      labels:
+        {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-cleanup-sa
+      restartPolicy: Never
+      containers:
+      - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -e
+          echo "Starting pre-install cleanup job..."
+          
+          # Check if the old certificate secret exists and delete it
+          if kubectl get secret instana-autotrace-webhook-certs -n {{ .Release.Namespace }} &> /dev/null; then
+            echo "Found existing certificate secret, deleting it..."
+            kubectl delete secret instana-autotrace-webhook-certs -n {{ .Release.Namespace }} || true
+          fi
+          
+          echo "Pre-install cleanup completed"
+
+# Made with Bob

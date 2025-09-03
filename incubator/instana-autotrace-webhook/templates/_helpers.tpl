@@ -32,6 +32,14 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "instana-autotrace-webhook.tlsSecretName" -}}
+{{- printf "%s-serving-tls" (include "instana-autotrace-webhook.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "instana-autotrace-webhook.caSecretName" -}}
+{{- printf "%s-ca" (include "instana-autotrace-webhook.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
 {{/*
 Add Helm metadata to resource labels.
 */}}

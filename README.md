@@ -68,6 +68,30 @@ The `instana-autotrace-version` label will be applied to the Pods, ReplicaSets, 
 - Only `linux/amd64` Kubernetes nodes are currently supported.
 - In your Kubernetes setup, updating the webhook via Helm doesn't automatically pull the latest image, leading to potential mismatches between new code and old images. To address this, uninstalling and reinstalling the webhook can ensure it uses the latest default values and images, but previously deployed workloads may still require redeployment to apply the updated instrumentation.
 
+## Advanced Configuration
+
+### Webhook Failure Policy
+
+The webhook's failure policy determines what happens when the webhook fails to respond to admission requests:
+
+```yaml
+autotrace:
+  # Valid values: "Ignore" or "Fail"
+  failurePolicy: Ignore
+```
+
+- `failurePolicy: Ignore` (default): Kubernetes will proceed with the request even if the webhook fails to respond. This is safer for production environments as it ensures workloads can still be scheduled even if the webhook is unavailable.
+
+- `failurePolicy: Fail`: Kubernetes will reject the request if the webhook fails to respond. This is useful for testing environments where you want to ensure all pods are properly instrumented.
+
+You can set this option when installing or upgrading the chart:
+
+```bash
+helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
+  --repo https://agents.instana.io/helm instana-autotrace-webhook \
+  --set autotrace.failurePolicy=Fail
+```
+
 ## Configuration
 
 ### Enable `ingress-nginx` tracing

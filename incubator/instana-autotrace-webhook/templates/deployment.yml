@@ -3,40 +3,46 @@ kind: Deployment
 metadata:
   name: instana-autotrace-webhook
   labels:
-{{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
-{{- if .Values.webhook.deployment.additionalLabels }}
-{{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
-{{- end }}
-{{- if .Values.webhook.deployment.additionalAnnotations }}
+    {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
+    {{- if .Values.webhook.deployment.additionalLabels }}
+    {{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
+    {{- end }}
+    {{- if .Values.webhook.deployment.additionalAnnotations }}
   annotations:
-{{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
-{{- end }}
+    {{ toYaml .Values.webhook.deployment.additionalAnnotations | indent 4 }}
+    {{- end }}
 spec:
-  replicas: {{ .Values.webhook.replicas }}
+  replicas: {{ .Values.webhook.deployment.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/instance: {{ .Release.Name }}
   strategy:
-    # Since we bind to the host network, a rolling update on small clusters may deadlock,
-    # with new pods not able to start because the network port is taken, and old pods remaining
-    # around until the new ones are up
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       name: instana-autotrace-webhook
       labels:
-{{- if .Values.webhook.pod.additionalLabels }}
-{{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
-{{- end }}
-{{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
-        instana-autotrace-ignore: "true"
-{{- if .Values.webhook.pod.additionalAnnotations }}
-      annotations:
-{{ toYaml .Values.webhook.pod.additionalAnnotations | indent 8 }}
-{{- end }}
+        # Add required labels to match selector
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
+        {{- if .Values.webhook.pod.additionalLabels }}
+        {{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
+        {{- end }}
+        # Add checksum annotation from the certificate secret to trigger pod restart when certificates change
+        {{- $tlsSecretName := include "instana-autotrace-webhook.tlsSecretName" . -}}
+        {{- $certsSecret := lookup "v1" "Secret" .Release.Namespace $tlsSecretName }}
+        {{- if $certsSecret }}
+        # Use a shorter hash to stay within the 63 character limit for label values
+        checksum/tls: "{{ (printf "%s%s"
+          (index $certsSecret.data "tls.crt" | default "")
+          (index $certsSecret.data "tls.key" | default "")) | sha256sum | trunc 63 }}"
+        {{- else }}
+        checksum/tls: "first-install"
+        {{- end }}
     spec:
+      terminationGracePeriodSeconds: 30
       serviceAccountName: {{ .Release.Name }}
-{{- if .Values.webhook.priorityClass.name }}
+{{- if and (hasKey .Values.webhook "priorityClass") (kindIs "map" .Values.webhook.priorityClass) (hasKey .Values.webhook.priorityClass "name") .Values.webhook.priorityClass.name }}
       priorityClassName: {{ .Values.webhook.priorityClass.name }}
 {{- end }}
       securityContext:
@@ -140,7 +146,7 @@ spec:
           value: {{ .Values.autotrace.ingress_nginx.status_allow | quote }}
         - name: INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT
           value: {{ .Values.autotrace.libinstana_init.enabled | quote }}
-{{- if .Values.autotrace.volume.pvc.name }}
+{{- if and (hasKey .Values.autotrace "volume") (kindIs "map" .Values.autotrace.volume) (hasKey .Values.autotrace.volume "pvc") (kindIs "map" .Values.autotrace.volume.pvc) (hasKey .Values.autotrace.volume.pvc "name") .Values.autotrace.volume.pvc.name }}
         - name: INSTANA_USE_CUSTOM_VOLUME
           value: "true"
         - name: INSTANA_CUSTOM_VOLUME_PVC_NAME
@@ -187,28 +193,42 @@ spec:
         volumeMounts:
           - name: certificates
             mountPath: /app/certs
+            readOnly: true
         ports:
         - containerPort: {{ .Values.webhook.pod.port }}
 {{- if .Values.webhook.remoteDebug }}
         - containerPort: 5005
 {{- end }}
-{{- if .Values.webhook.pod.tolerations }}
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
             port: {{ .Values.webhook.pod.port }}
-          initialDelaySeconds: 10
+            scheme: HTTPS
+          initialDelaySeconds: 5
           periodSeconds: 10
-          timeoutSeconds: 1
+          timeoutSeconds: 2
           failureThreshold: 3
+          successThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: {{ .Values.webhook.pod.port }}
+            scheme: HTTPS
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 12
+          successThreshold: 1
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
             port: {{ .Values.webhook.pod.port }}
+            scheme: HTTPS
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 1
           failureThreshold: 3
+{{- if .Values.webhook.pod.tolerations }}
       tolerations:
 {{- toYaml .Values.webhook.tolerations | nindent 8 }}
 {{- end }}
@@ -219,4 +239,4 @@ spec:
       volumes:
         - name: certificates
           secret:
-            secretName: instana-autotrace-webhook-certs
+            secretName: {{ include "instana-autotrace-webhook.tlsSecretName" . }}
