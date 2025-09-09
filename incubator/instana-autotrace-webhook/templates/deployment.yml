@@ -23,7 +23,6 @@ spec:
       name: instana-autotrace-webhook
       labels:
         # Add required labels to match selector
-        app.kubernetes.io/instance: {{ .Release.Name }}
         {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
         {{- if .Values.webhook.pod.additionalLabels }}
         {{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
