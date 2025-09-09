@@ -9,7 +9,7 @@ metadata:
 {{- end }}
   annotations:
 {{- if .Values.openshift.enabled }}
-    service.beta.openshift.io/serving-cert-secret-name: instana-autotrace-webhook-certs
+    service.beta.openshift.io/serving-cert-secret-name: {{ include "instana-autotrace-webhook.tlsSecretName" . }}
 {{- end }}
 {{- if .Values.webhook.service.additionalAnnotations }}
 {{ toYaml .Values.webhook.service.additionalAnnotations | indent 4 }}
