@@ -2,6 +2,8 @@
 
 The Instana AutoTrace webhook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
 
+By default, the webhook only mutates pods and configmaps, which makes updates and uninstallation easier. When a new webhook pod runs, higher-level resources can simply be restarted, which would invoke new pods that would be mutated with the new instrumentation image. If you need the previous behavior of mutating higher-level resources directly (deployments, daemonsets, replicasets, statefulsets, and deploymentconfigs), you can enable it using the `autotrace.enableHigherLevelResourceMutation=true` flag.
+
 ## Requirements
 
 - Kubernetes 1.16+ OR OpenShift 4.5+
@@ -54,12 +56,11 @@ The `instana-autotrace-webhook` Helm chart will be regularly updated to use the 
 
 ```bash
 helm upgrade --namespace instana-autotrace-webhook instana-autotrace-webhook \
-  --repo https://agents.instana.io/helm instana-autotrace-webhook \
-  --reuse-values
+  --repo https://agents.instana.io/helm instana-autotrace-webhook
 ```
 
 You can find out which version of the AutoTrace webhook has been applied to which of your resources by looking up the `instana-autotrace-version` label.
-The `instana-autotrace-version` label will be applied to the Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs.
+The `instana-autotrace-version` label will be applied to the the mutated resources.
 
 ## Gotchas
 
@@ -124,7 +125,7 @@ By setting the `autotrace.opt_in=true` value when deploying the Helm chart, the 
 
 Irrespective of the value of the `autotrace.opt_in`, the AutoTrace webhook will _not_ touch pods that carry the `instana-autotrace: "false"` label.
 
-The `instana-autotrace: "false"` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, StatefulSets, and Namespaces, as well as in nested Pod templates and in standalone Pods.
+The `instana-autotrace: "false"` label is respected in metadata of Namespaces, as well as in nested Pod templates and in standalone Pods. If the flag `autotrace.enableHigherLevelResourceMutation=true` is set, then label is  respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, StatefulSets as well.
 
 ### Ignoring namespaces
 
@@ -163,7 +164,7 @@ The `instana-autotrace` label is respected in metadata of DaemonSets, Deployment
 
 Resources that have the `instana-autotrace: "false"` label, will be ignored regardless other settings.
 
-The `instana-autotrace` label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, StatefulSets, and Namespaces as well as in nested Pod templates and in standalone Pods.
+The `instana-autotrace` label is respected in metadata of Namespaces, as well as in nested Pod templates and in standalone Pods. If the flag `autotrace.enableHigherLevelResourceMutation=true` is set, then label is respected in metadata of DaemonSets, Deployments, DeploymentConfigs, ReplicaSets, StatefulSets as well.
 
 ### Minimize required ephemeral storage
 
@@ -233,6 +234,7 @@ respective environment variable below.
 |                                      Helm Value                                       |                    Environment variable                    |                                                                                                                                Explanation                                                                                                                                 |
 |:-------------------------------------------------------------------------------------:|:----------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | `.Values.global.version` |           NA           |                                                 Flag for setting the version of both the instrumentation and the webhook image. The flag overwrites any version or sha set as part of the .Values.autotrace.instrumentation.image and .Values.webhook.image                                               |
+| `.Values.autotrace.enableHigherLevelResourceMutation` |           NA           |                                                 By default the webhook will only mutate pods and configmaps. When set to "true", the webhook will also mutate higher-level resources such as deployments, daemonsets, replicasets, statefulsets, and deploymentconfigs. Default `false`.                                                 |
 |                      `.Values.webhook.imagePullSecrets[x].name`                          |          `NA`                               |                                                                                                         Alternative to providing the `<download_key>` as plaintext flag, it's possible to provide the already created imagePullSecret name directly.
 | `.Values.autotrace.exclude.builtin_namespaces` `.Values.autotrace.exclude.namespaces` |           `INSTANA_AUTOTRACE_IGNORED_NAMESPACES`           |                                                 List of kubernetes namespaces to be ignored for autotracing. This includes a list of builtin that are always ignored such  as the ones starting with `instana-` or `kube-`                                                 |
 |                         `.Values.autotrace.exclude.selector`                          |                                                            | List of kubernetes namespaces that will be ignored at the configuration-level, resources in this namespace will not be sent to the webhook, resources in namespaces specified in the other exclude fields will be sent through the webhook, but will be ignored at runtime |
