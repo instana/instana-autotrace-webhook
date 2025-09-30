@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.305.4
+
+
 ## 1.305.3
 
 - Update the instana Gem to 2.1.0
