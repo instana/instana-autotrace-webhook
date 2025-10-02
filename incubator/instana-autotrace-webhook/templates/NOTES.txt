@@ -26,3 +26,10 @@ Logs for the Instana AutoTrace WebHook are available via:
   kubectl logs -l app.kubernetes.io/name={{ .Release.Name }} -n {{ .Release.Namespace }}
 
 Ensure to redeploy the Kubernetes resources for mutation to take effect.
+
+{{- if .Values._warnings }}
+WARNINGS:
+{{- range .Values._warnings }}
+  - {{ . }}
+{{- end }}
+{{- end }}

@@ -51,9 +51,11 @@ spec:
 {{- if (gt (len .Values.webhook.imagePullSecrets) 0) }}
       imagePullSecrets:
 {{ toYaml .Values.webhook.imagePullSecrets | indent 8 }}
-{{- else if (hasPrefix "containers.instana.io/" .Values.webhook.image) }}
+{{- else }}
+{{- if and (eq (include "instana-autotrace-webhook.hasImagePullCredentials" .) "true") (hasPrefix "containers.instana.io/" .Values.webhook.image) }}
       imagePullSecrets:
       - name: containers-instana-io
+{{- end }}
 {{- end }}
       containers:
       - name: instana-autotrace-webhook

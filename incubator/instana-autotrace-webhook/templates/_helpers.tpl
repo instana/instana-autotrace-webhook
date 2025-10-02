@@ -54,17 +54,32 @@ helm.sh/chart: {{ include "instana-autotrace-webhook.chart" . }}
 {{- end -}}
 {{- end -}}
 
+{{/*
+Check if webhook image pull credentials are provided
+*/}}
+{{- define "instana-autotrace-webhook.hasImagePullCredentials" -}}
+{{- if and .Values.webhook.imagePullCredentials.registry .Values.webhook.imagePullCredentials.username .Values.webhook.imagePullCredentials.password -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set warning message and flag for missing image pull credentials
+*/}}
+{{- define "instana-autotrace-webhook.setImagePullCredentialsWarning" -}}
+{{- $warningMsg := "WARNING: One or more of the webhook.imagePullCredentials settings (registry, username, password) is not provided. If the images are not configured to be pulled from internal registries, the deployment will not enter running state." }}
+{{- $_ := set .Values "_warnings" (append (.Values._warnings | default (list)) $warningMsg) }}
+{{- $_ := set .Values "_noImagePullSecret" true }}
+{{- end -}}
+
 {{- define "instana-autotrace-webhook.webhook.imagePullSecret" }}
-{{- if not .Values.webhook.imagePullCredentials.registry }}
-{{- fail "The 'webhook.imagePullCredentials.registry' setting must be provided" }}
-{{- end }}
-{{- if not .Values.webhook.imagePullCredentials.username }}
-{{- fail "The 'webhook.imagePullCredentials.username' setting must be provided" }}
-{{- end }}
-{{- if and (not .Values.webhook.imagePullCredentials.password) (eq (len .Values.webhook.imagePullSecrets) 0)}}
-{{- fail "The 'webhook.imagePullCredentials.password' or 'webhook.imagePullSecrets' setting must be provided" }}
-{{- end }}
+{{- if eq (include "instana-autotrace-webhook.hasImagePullCredentials" .) "false" }}
+{{- include "instana-autotrace-webhook.setImagePullCredentialsWarning" . }}
+{{- else }}
 {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .Values.webhook.imagePullCredentials.registry .Values.webhook.imagePullCredentials.username .Values.webhook.imagePullCredentials.password (printf "%s:%s" .Values.webhook.imagePullCredentials.username .Values.webhook.imagePullCredentials.password | b64enc) | b64enc }}
+{{- end }}
 {{- end }}
 
 {{- define "instana-autotrace-webhook.init.imagePullSecret" }}
