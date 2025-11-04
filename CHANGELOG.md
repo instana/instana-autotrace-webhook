@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.308.0
+
+- Update the @instana/collector Node.js package to 4.27.1
+- Update the Instana Python package to 3.9.2
+- Update the .NET Core dependencies to 1.307.2
+
 ## 1.307.2
 
 - Update the Instana Python package to 3.9.1
