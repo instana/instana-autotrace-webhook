@@ -1,6 +1,6 @@
 # Instana AutoTrace webhook
 
-The Instana AutoTrace webhook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster.
+The Instana AutoTrace webhook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster. Tracing for IBM MQ and IBM ACE is configurable.
 
 By default, the webhook only mutates pods and configmaps, which makes updates and uninstallation easier. When a new webhook pod runs, higher-level resources can simply be restarted, which would invoke new pods that would be mutated with the new instrumentation image. If you need the previous behavior of mutating higher-level resources directly (deployments, daemonsets, replicasets, statefulsets, and deploymentconfigs), you can enable it using the `autotrace.enableHigherLevelResourceMutation=true` flag.
 
@@ -66,7 +66,7 @@ The `instana-autotrace-version` label will be applied to the the mutated resourc
 
 - The Instana AutoTrace webhook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace webhook to do its magic.
-- Only `linux/amd64` Kubernetes nodes are currently supported.
+- The `linux/amd64` Kubernetes nodes are currently fully supported and `linux/s390x` have support for Ruby, Python, Node.js, IBM ACE and IBM MQ.
 - In your Kubernetes setup, updating the webhook via Helm doesn't automatically pull the latest image, leading to potential mismatches between new code and old images. To address this, uninstalling and reinstalling the webhook can ensure it uses the latest default values and images, but previously deployed workloads may still require redeployment to apply the updated instrumentation.
 
 ## Advanced Configuration
