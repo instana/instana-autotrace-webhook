@@ -231,11 +231,11 @@ spec:
           failureThreshold: 3
 {{- if .Values.webhook.pod.tolerations }}
       tolerations:
-{{- toYaml .Values.webhook.tolerations | nindent 8 }}
+{{- toYaml .Values.webhook.pod.tolerations | nindent 8 }}
 {{- end }}
-{{- if .Values.webhook.affinity }}
+{{- if .Values.webhook.pod.affinity }}
       affinity:
-{{- toYaml .Values.webhook.affinity | nindent 8 }}
+{{- toYaml .Values.webhook.pod.affinity | nindent 8 }}
 {{- end }}
       volumes:
         - name: certificates

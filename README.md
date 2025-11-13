@@ -66,7 +66,10 @@ The `instana-autotrace-version` label will be applied to the the mutated resourc
 
 - The Instana AutoTrace webhook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace webhook to do its magic.
-- The `linux/amd64` Kubernetes nodes are currently fully supported and `linux/s390x` have support for Ruby, Python, Node.js, IBM ACE and IBM MQ.
+- The Instana AutoTrace webhook supports multiple CPU architectures:
+  - `linux/amd64` (x86_64): Full support for all technologies (Node.js, .NET Core, Ruby, Python, NGINX, IBM ACE, IBM MQ)
+  - `linux/arm64` (aarch64): Support for Node.js, Ruby, Python, NGINX
+  - `linux/s390x` (IBM Z): Support for Node.js, Ruby, Python, IBM ACE, and IBM MQ
 - In your Kubernetes setup, updating the webhook via Helm doesn't automatically pull the latest image, leading to potential mismatches between new code and old images. To address this, uninstalling and reinstalling the webhook can ensure it uses the latest default values and images, but previously deployed workloads may still require redeployment to apply the updated instrumentation.
 
 ## Advanced Configuration
