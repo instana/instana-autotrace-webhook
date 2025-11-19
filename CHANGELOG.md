@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.309.0
+
+- Update the Instana Python package to 3.9.3
+- Update the instana Gem to 2.2.0
+
 ## 1.308.2
 
 
