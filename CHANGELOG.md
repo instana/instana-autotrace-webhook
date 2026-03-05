@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.314.0
+
+- Update the .NET Core dependencies to 1.314.1
+- Update the Instana Python package to 1.36.1
+- Update the Instana Python package to 3.11.0
+- Update the @instana/collector Node.js package to 5.2.3
+
 ## 1.313.3
 
 
