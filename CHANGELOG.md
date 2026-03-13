@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.315.2
+
+- Update the instana Gem to 2.5.1
+- Update the Instana Python package to 3.11.1
+
 ## 1.315.1
 
 - Update the .NET Core dependencies to 1.315.1
