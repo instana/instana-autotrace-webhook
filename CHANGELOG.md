@@ -2,6 +2,10 @@
 
 ## 1.315.4
 
+- Update the Instana Python package to 3.12.0
+
+## 1.315.4
+
 - Update the .NET Core dependencies to 1.315.5
 - Update the @instana/collector Node.js package to 5.4.1
 - Update the @instana/collector Node.js package to 5.4.0
