@@ -27,6 +27,13 @@ Logs for the Instana AutoTrace WebHook are available via:
 
 Ensure to redeploy the Kubernetes resources for mutation to take effect.
 
+{{- if .Values.autotrace.ibmmq.enabled }}
+
+WARNING: IBM MQ Support Deprecation
+DEPRECATION WARNING: Instana Autotrace webhook support for IBM MQ is deprecated. Effective 1 May 2027, Instana will officially end support and declare it end of life (EOL).
+This feature is replaced by IBM MQ operator. See https://ibm.biz/~iOcjBE7GN for more details.
+{{- end }}
+
 {{- if .Values._warnings }}
 WARNINGS:
 {{- range .Values._warnings }}
