@@ -19,6 +19,7 @@ It will automatically instrument:
 {{- end }}
 {{- if .Values.autotrace.ingress_nginx.enabled }}
   - Ingress NGINX
+    DEPRECATION NOTICE: NGINX Tracer has announced deprecation for NGINX versions earlier than 1.24.0 and NGINX Plus versions earlier than R30. These deprecated versions will be supported until April 1, 2027. Going forward, Instana will deprecate EOL NGINX versions after two years of their official end-of-life date. After this date, older versions of NGINX Tracer will remain available but will not receive maintenance updates. To ensure optimal performance and security, upgrade to a supported NGINX version.
 {{- end }}
 
 Logs for the Instana AutoTrace WebHook are available via:
