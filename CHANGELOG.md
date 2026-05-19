@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.317.7
+
+- Update the @instana/collector Node.js package to 6.0.0
+- Update the Instana Python package to 3.15.0
+- Update the @instana/collector Node.js package to 5.5.0
+- Update the .NET Core dependencies to 1.318.3
+
 ## 1.317.6
 
 - Update the instana Gem to 2.7.0
