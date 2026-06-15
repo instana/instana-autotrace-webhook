@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "instana-autotrace-webhook.commonLabels" . | nindent 4 }}
     {{- if .Values.webhook.deployment.additionalLabels }}
-    {{ toYaml .Values.webhook.deployment.additionalLabels | indent 4 }}
+    {{- toYaml .Values.webhook.deployment.additionalLabels | nindent 4 }}
     {{- end }}
     {{- if .Values.webhook.deployment.additionalAnnotations }}
   annotations:
@@ -25,7 +25,7 @@ spec:
         # Add required labels to match selector
         {{- include "instana-autotrace-webhook.commonLabels" . | nindent 8 }}
         {{- if .Values.webhook.pod.additionalLabels }}
-        {{ toYaml .Values.webhook.pod.additionalLabels | indent 8 }}
+        {{- toYaml .Values.webhook.pod.additionalLabels | nindent 8 }}
         {{- end }}
         # Add checksum annotation from the certificate secret to trigger pod restart when certificates change
         {{- $tlsSecretName := include "instana-autotrace-webhook.tlsSecretName" . -}}
