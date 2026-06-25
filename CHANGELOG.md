@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.320.3
+
+- Update the .NET Core dependencies to 1.320.1
+
 ## 1.320.2
 
 - Update the @instana/collector Node.js package to 6.2.1
