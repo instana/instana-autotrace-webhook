@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.320.5
+
+- Update the .NET Core dependencies to 1.320.2
+
 ## 1.320.4
 
 - Update the Instana Python package to 3.16.0
