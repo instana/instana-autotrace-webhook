@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.320.6
+
+
 ## 1.320.5
 
 - Update the .NET Core dependencies to 1.320.2
