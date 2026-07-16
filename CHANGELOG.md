@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.320.11
+
+
 ## 1.320.10
 
 - Update the @instana/collector Node.js package to 6.4.0
