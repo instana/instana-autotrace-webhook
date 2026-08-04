@@ -2,6 +2,122 @@
 
 ## 1.322.0
 
+- Update the @instana/collector Node.js package to 6.6.0
+- Update the .NET Core dependencies to 1.321.2
+- Update the @instana/collector Node.js package to 6.5.0
+- Update the @instana/collector Node.js package to 6.4.0
+- Update the instana Gem to 2.7.2
+- Update the @instana/collector Node.js package to 6.3.0
+- Update the @instana/collector Node.js package to 6.2.2
+- Update the .NET Core dependencies to 1.320.2
+- Update the Instana Python package to 3.16.0
+- Update the .NET Core dependencies to 1.320.1
+- Update the @instana/collector Node.js package to 6.2.1
+- Update the .NET Core dependencies to 1.319.7
+- Update the instana Gem to 2.7.1
+- Update the .NET Core dependencies to 1.319.6
+- Update the @instana/collector Node.js package to 6.2.0
+- Update the .NET Core dependencies to 1.319.5
+- Update the @instana/collector Node.js package to 6.1.1
+- Update the @instana/collector Node.js package to 6.1.0
+- Update the .NET Core dependencies to 1.319.2
+- Update the @instana/collector Node.js package to 6.0.0
+- Update the Instana Python package to 3.15.0
+- Update the @instana/collector Node.js package to 5.5.0
+- Update the .NET Core dependencies to 1.318.3
+- Update the instana Gem to 2.7.0
+- Update the Instana Python package to 3.14.0
+- Update the .NET Core dependencies to 1.317.2
+- Update the @instana/collector Node.js package to 5.4.3
+- Update the Instana Python package to 3.13.0
+- Update the @instana/collector Node.js package to 5.4.2
+- Update the .NET Core dependencies to 1.316.4
+- Update the instana Gem to 2.6.1
+- Update the .NET Core dependencies to 1.316.3
+- Update the .NET Core dependencies to 1.316.2
+- Update the instana Gem to 2.6.0
+- Update the .NET Core dependencies to 1.315.7
+- Update the .NET Core dependencies to 1.315.6
+- Update the Instana Python package to 3.12.0
+- Update the .NET Core dependencies to 1.315.5
+- Update the @instana/collector Node.js package to 5.4.1
+- Update the @instana/collector Node.js package to 5.4.0
+- Update the .NET Core dependencies to 1.315.2
+- Update the instana Gem to 2.5.1
+- Update the Instana Python package to 3.11.1
+- Update the .NET Core dependencies to 1.315.1
+- Update the @instana/collector Node.js package to 5.3.0
+- Update the manual trigger to 1.0.8
+- Update the .NET Core dependencies to 1.314.1
+- Update the Instana Python package to 1.36.1
+- Update the Instana Python package to 3.11.0
+- Update the @instana/collector Node.js package to 5.2.3
+- Update the Instana Python package to 3.10.2
+- Update the @instana/collector Node.js package to 5.2.2
+- Update the .NET Core dependencies to 1.311.2
+- Update the @instana/collector Node.js package to 5.2.1
+- Update the @instana/collector Node.js package to 5.2.0
+- Update the instana Gem to 2.4.0
+- Update the Instana Python package to 3.10.1
+- Update the .NET Core dependencies to 1.311.1
+- Update the @instana/collector Node.js package to 5.1.0
+- Fix stale README.public.md and changelog in public releases (#695)
+- Update the Instana Python package to 3.10.0
+- Update the instana Gem to 2.3.0
+- Update the @instana/collector Node.js package to 5.0.2
+- Update the @instana/collector Node.js package to 5.0.1
+- Update the .NET Core dependencies to 1.309.2
+- Update the @instana/collector Node.js package to 4.31.0
+- Update the Instana Python package to 3.9.4
+- Update the .NET Core dependencies to 1.309.1
+- Update the @instana/collector Node.js package to 4.30.1
+- Update the @instana/collector Node.js package to 4.30.0
+- Update the Instana Python package to 3.9.3
+- Update the instana Gem to 2.2.0
+- Update the @instana/collector Node.js package to 4.29.0
+- Update the @instana/collector Node.js package to 4.28.0
+- Update the .NET Core dependencies to 1.308.1
+- Update the @instana/collector Node.js package to 4.27.1
+- Update the Instana Python package to 3.9.2
+- Update the .NET Core dependencies to 1.307.2
+- Update the Instana Python package to 3.9.1
+- Update the @instana/collector Node.js package to 4.27.0
+- Update the @instana/collector Node.js package to 4.26.4
+- Update the @instana/collector Node.js package to 4.26.3
+- Update the @instana/collector Node.js package to 4.26.2
+- Update the @instana/collector Node.js package to 4.26.1
+- Update the Instana Python package to 3.9.0
+- Update the @instana/collector Node.js package to 4.26.0
+- Update the instana Gem to 2.1.0
+- Update the Instana Python package to 3.8.3
+- Update the @instana/collector Node.js package to 4.25.0
+- Update the @instana/collector Node.js package to 4.24.1
+- Update the @instana/collector Node.js package to 4.24.0
+- Update the Instana Python package to 3.8.2
+- Update the @instana/collector Node.js package to 4.23.1
+- Update the Instana Python package to 3.8.1
+- Update the Instana Python package to 3.8.0
+- Update the @instana/collector Node.js package to 4.23.0
+- Update the .NET Core dependencies to 1.302.1
+- Update the Instana Python package to 3.7.2
+- Update the @instana/collector Node.js package to 4.22.0
+- Update the Instana Python package to 3.7.1
+- Update the @instana/collector Node.js package to 4.21.3
+- Update the instana Gem to 2.0.0
+- Update the @instana/collector Node.js package to 4.21.2
+- Update the @instana/collector Node.js package to 4.21.1
+- Update the Instana Python package to 3.7.0
+- Update the @instana/collector Node.js package to 4.21.0
+- Update the @instana/collector Node.js package to 4.20.0
+- Update the @instana/collector Node.js package to 4.19.1
+- Update the @instana/collector Node.js package to 4.19.0
+- Update the Instana Python package to 3.6.0
+- Update the .NET Core dependencies to 1.300.1
+- Update the @instana/collector Node.js package to 4.18.1
+- Update the @instana/collector Node.js package to 4.18.0
+
+## 1.322.0
+
 - Update the .NET Core dependencies to 1.321.2
 - Update the @instana/collector Node.js package to 6.5.0
 
