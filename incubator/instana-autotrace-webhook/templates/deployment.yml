@@ -109,6 +109,8 @@ spec:
           value: {{ .Values.autotrace.instrumentation.manual.nodejs | quote }}
         - name: INSTANA_INSTRUMENT_NETCORE
           value: {{ .Values.autotrace.instrumentation.manual.netcore | quote }}
+        - name: INSTANA_INSTRUMENT_NETFF
+          value: {{ .Values.autotrace.instrumentation.manual.netff | quote }}
         - name: INSTANA_INSTRUMENT_NGINX
           value: {{ .Values.autotrace.instrumentation.manual.nginx | quote }}
         - name: INSTANA_INSTRUMENT_PYTHON
@@ -127,6 +129,12 @@ spec:
           value: {{ .Values.autotrace.nodejs.enabled | quote }}
         - name: INSTANA_AUTOTRACE_NETCORE
           value: {{ .Values.autotrace.netcore.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_NETFF
+          value: {{ .Values.autotrace.netff.enabled | quote }}
+        - name: INSTANA_NETFF_IMAGE_BASE
+          value: {{ printf "%s:%s" .Values.autotrace.netff_instrumentation.image .Values.autotrace.netff_instrumentation.tag | quote }}
+        - name: INSTANA_NETFF_IMAGE_PULL_POLICY
+          value: {{ .Values.autotrace.netff_instrumentation.imagePullPolicy | quote }}
         - name: INSTANA_AUTOTRACE_RUBY
           value: {{ .Values.autotrace.ruby.enabled | quote }}
         - name: INSTANA_AUTOTRACE_PYTHON

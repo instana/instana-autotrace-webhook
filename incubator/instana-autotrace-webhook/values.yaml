@@ -1,7 +1,7 @@
 # Default values for instana-autotrace-webhook.
 
 global:
-  version: 1.323.9
+  version: 1.323.10
 rbac:
   enabled: true # Setting openshift.enabled=true implies rbac.enabled=true
   psp: # Ignored unless rbac.enabled == true
@@ -95,6 +95,7 @@ autotrace:
     manual:
       nodejs: false
       netcore: false
+      netff: false
       nginx: false
       ruby: false
       python: false
@@ -117,6 +118,17 @@ autotrace:
     application_type: commonjs
   netcore:
     enabled: true
+  netff:
+    enabled: false
+  netff_instrumentation:
+    # Windows init-container image mirrored to the public ICR namespace at release time.
+    # The webhook automatically appends the OS suffix (-ltsc2022 or -ltsc2019) based on
+    # the pod's nodeSelector, so no per-node configuration is required.
+    # tag is left empty here; prepare-public-release.sh stamps it from
+    # instrumentation/src/netff/VERSION when publishing the public Helm chart.
+    image: icr.io/instana/netff-instrumentation
+    tag: 1.322.1
+    imagePullPolicy: IfNotPresent
   ruby:
     enabled: true
   python:

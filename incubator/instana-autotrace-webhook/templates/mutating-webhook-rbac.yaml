@@ -18,6 +18,11 @@ rules:
 - apiGroups: [""]
   resources: ["secrets", "configmaps", "namespaces"]
   verbs: ["get", "list", "watch", "create"]
+{{- if .Values.autotrace.netff.enabled }}
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list"]
+{{- end }}
 {{- if .Values.rbac.psp.enabled}}
 {{- if semverCompare "< 1.25.x" (include "kubeVersion" .) }}
 - apiGroups: ["policy"]
