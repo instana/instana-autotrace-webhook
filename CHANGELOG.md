@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.323.14
+
+- Update the @instana/collector Node.js package to 6.7.0
+
 ## 1.323.13
 
 

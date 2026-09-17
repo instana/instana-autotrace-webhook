@@ -2,7 +2,7 @@ The Instana AutoTrace WebHook is installed.
 
 It will automatically instrument:
 {{- if .Values.autotrace.libinstana_init.enabled }}
-  - Node.js, .NET Core, Ruby & Python applications via LD_PRELOAD
+  - Node.js, .NET Core, Ruby & Python applications (LD_PRELOAD is injected unless INSTANA_DISABLE_LD_PRELOAD=true is set on a workload)
 {{- else }}
   {{- if .Values.autotrace.nodejs.enabled }}
     - Node.js applications

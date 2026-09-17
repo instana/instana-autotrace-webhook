@@ -188,6 +188,22 @@ Alternatively, it is possible to configure it per deployment or pod. For this ap
 
 It is possible to specify more than one flag and include instrumentation files for two or more technologies. For more details on the environment variables or helm chart flags, please check the [helm values section](#helm-values).
 
+### Disabling `LD_PRELOAD` and `libinstana_init`
+
+If your workload must not have `LD_PRELOAD` set (for example, because it conflicts with a custom shared library), you can opt out of both `LD_PRELOAD` injection and the `libinstana_init` file copy by setting the following environment variable on the application container:
+
+```yaml
+env:
+  - name: INSTANA_DISABLE_LD_PRELOAD
+    value: "true"
+```
+
+When this variable is set to `"true"` on any application container in the pod:
+
+- `LD_PRELOAD` is **not** injected into any application container.
+- `libinstana_init` files are **not** copied into the instrumentation volume.
+- All other instrumentation files (Node.js, Python, Ruby, NGINX, etc.) and environment variables (`NODE_OPTIONS`, `PYTHONPATH`, `RUBYOPT`, etc.) are still injected as normal.
+
 ## Troubleshooting
 
 If you do not see the Instana AutoTrace webhook have effect on your _new_ Kubernetes resources, the steps to troubleshoot are the following.
@@ -266,6 +282,7 @@ respective environment variable below.
 |                      `.Values.autotrace.instrumentation.manual.nginx`                          |          `INSTANA_INSTRUMENT_NGINX`                               |                                                                                                         Flag to explicitely copy files for nginx. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.ruby`                          |          `INSTANA_INSTRUMENT_RUBY`                               |                                                                                                         Flag to explicitely copy files for Ruby applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.python`                          |          `INSTANA_INSTRUMENT_PYTHON`                               |                                                                                                         Flag to explicitely copy files for Python applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.
+|                      NA                          |          `INSTANA_DISABLE_LD_PRELOAD`                               |                                                                                                         Set to `"true"` on an application container to disable `LD_PRELOAD` injection and skip copying `libinstana_init` into the instrumentation volume. All other instrumentation files and env vars are still injected.
 |                      `.Values.autotrace.instrumentation.imagePullCredentials.registry`                          |          NA                               |                                                                                                         The initContainer image can be pulled from private registry by customizing the deployment. This flag can be used to specify the registry for creating the pull secret.
 |                      `.Values.autotrace.instrumentation.imagePullCredentials.username`                          |          NA                               |                                                                                                         The initContainer image can be pulled from private registry by customizing the deployment. This flag can be used to specify the username for creating the pull secret.
 |                      `.Values.autotrace.instrumentation.imagePullCredentials.password`                          |          NA                               |                                                                                                         The initContainer image can be pulled from private registry by customizing the deployment. This flag can be used to specify the password for creating the pull secret.
