@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.326.1
+
+- Update the instana Gem to 2.9.0
+- Update the Instana Python package to 3.19.0
+- Update the @instana/collector Node.js package to 6.8.0
+
 ## 1.326.0
 
 
