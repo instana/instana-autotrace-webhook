@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.327.0
+
+- Update the .NET FF dependencies to 1.326.1
+- Update the @instana/collector Node.js package to 6.9.0
+- Update the instana Gem to 2.10.0
+- Update the .NET Core dependencies to 1.326.1
+- Update the Instana Python package to 3.19.1
+
 ## 1.326.1
 
 - Update the instana Gem to 2.9.0

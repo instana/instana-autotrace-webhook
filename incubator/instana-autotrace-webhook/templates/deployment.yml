@@ -132,7 +132,9 @@ spec:
         - name: INSTANA_AUTOTRACE_NETFF
           value: {{ .Values.autotrace.netff.enabled | quote }}
         - name: INSTANA_NETFF_IMAGE_BASE
-          value: {{ printf "%s:%s" .Values.autotrace.netff_instrumentation.image .Values.autotrace.netff_instrumentation.tag | quote }}
+          value: {{ .Values.autotrace.netff_instrumentation.image | quote }}
+        - name: INSTANA_NETFF_IMAGE_TAG
+          value: {{ .Values.autotrace.netff_instrumentation.tag | quote }}
         - name: INSTANA_NETFF_IMAGE_PULL_POLICY
           value: {{ .Values.autotrace.netff_instrumentation.imagePullPolicy | quote }}
         - name: INSTANA_AUTOTRACE_RUBY
