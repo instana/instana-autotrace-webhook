@@ -1,6 +1,6 @@
 # Instana AutoTrace webhook
 
-The Instana AutoTrace webhook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures the Instana tracing on Node.js, .NET Core, Ruby and Pyhton applications as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster. Tracing for IBM MQ and IBM ACE is configurable.
+The Instana AutoTrace webhook is a Kubernetes [admission controller mutating webhook](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) that automatically configures Instana tracing on Node.js, .NET Core, Ruby, Python, and Java applications, as well as `ingress-nginx` ingress controllers running across the entire Kubernetes cluster. Tracing for IBM MQ and IBM ACE is configurable.
 
 By default, the webhook only mutates pods and configmaps, which makes updates and uninstallation easier. When a new webhook pod runs, higher-level resources can simply be restarted, which would invoke new pods that would be mutated with the new instrumentation image. If you need the previous behavior of mutating higher-level resources directly (deployments, daemonsets, replicasets, statefulsets, and deploymentconfigs), you can enable it using the `autotrace.enableHigherLevelResourceMutation=true` flag.
 
@@ -67,10 +67,70 @@ The `instana-autotrace-version` label will be applied to the the mutated resourc
 - The Instana AutoTrace webhook will take effect on _new_ Kubernetes resources.
   That is, you may need to delete your Pods, ReplicaSets, StatefulStes, Deployments and DeploymentConfigs and create them anew, for the Instana AutoTrace webhook to do its magic.
 - The Instana AutoTrace webhook supports multiple CPU architectures:
-  - `linux/amd64` (x86_64): Full support for all technologies (Node.js, .NET Core, Ruby, Python, NGINX, IBM ACE, IBM MQ)
-  - `linux/arm64` (aarch64): Support for Node.js, Ruby, Python, NGINX
-  - `linux/s390x` (IBM Z): Support for Node.js, Ruby, Python, IBM ACE, and IBM MQ
+  - `linux/amd64` (x86_64): Full support for all technologies (Node.js, .NET Core, Ruby, Python, NGINX, Java, IBM ACE, IBM MQ)
+  - `linux/arm64` (aarch64): Support for Node.js, Ruby, Python, NGINX, Java
+  - `linux/s390x` (IBM Z): Support for Node.js, Ruby, Python, NGINX, IBM ACE, and IBM MQ
 - In your Kubernetes setup, updating the webhook via Helm doesn't automatically pull the latest image, leading to potential mismatches between new code and old images. To address this, uninstalling and reinstalling the webhook can ensure it uses the latest default values and images, but previously deployed workloads may still require redeployment to apply the updated instrumentation.
+
+## Java autotracing
+
+> **Note:** Java autotracing is not supported on `linux/s390x` (IBM Z).
+
+Java autotracing is **opt-in** and **disabled by default**. It uses the Instana Java agent launcher to instrument JVM-based applications without requiring any code changes or manual `-javaagent` flags.
+
+### How it works
+
+Unlike other runtimes, the JVM cannot accept tracing configuration through environment variables alone — the agent JAR must be present on the `-javaagent:` flag at JVM startup. The webhook delivers this through a file-based mechanism:
+
+1. When Java autotracing is enabled, the instrumentation init container copies the agent launcher JAR onto the shared volume and writes its path into a control file (`java/instana-javaagent-launcher-path`).
+2. `libinstana_init.so` — already preloaded via `LD_PRELOAD` — reads that control file when the JVM starts. If the file exists and the JAR is present, it transparently appends `-javaagent:<path>` to `JAVA_TOOL_OPTIONS`. **If the control file is absent, `LD_PRELOAD` has no effect on the JVM process** — no instrumentation is applied.
+3. No changes to your application code, Dockerfiles, or JVM startup scripts are required.
+
+### Requirements
+
+- Java 7 or later.
+- `autotrace.libinstana_init.enabled=true` (the default) — `libinstana_init` is the component that activates the Java agent at JVM startup.
+
+### Enabling
+
+```bash
+helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
+  --repo https://agents.instana.io/helm instana-autotrace-webhook \
+  --set autotrace.java.enabled=true
+```
+
+### Debug mode
+
+Set `autotrace.java.debug=true` to enable bootstrap logging. When active, the Java agent writes a startup log next to the JAR, which helps diagnose Java agent initialisation failures:
+
+```bash
+helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
+  --repo https://agents.instana.io/helm instana-autotrace-webhook \
+  --set autotrace.java.enabled=true \
+  --set autotrace.java.debug=true
+```
+
+### Per-deployment opt-in
+
+To enable Java autotracing for a specific workload without a cluster-wide Helm change, set
+`INSTANA_INSTRUMENT_JAVA: "true"` directly in your pod spec:
+
+```yaml
+spec:
+  containers:
+    - name: my-java-app
+      env:
+        - name: INSTANA_INSTRUMENT_JAVA
+          value: "true"
+```
+
+When `INSTANA_INSTRUMENT_JAVA` is set on a pod, the webhook operates in selective-copy mode
+for that workload — only `java/` and `libinstana_init` are copied to the instrumentation volume;
+other technology directories are skipped unless their own flag is also present.
+`INSTANA_AUTOTRACE_JAVA_DEBUG` can be set alongside it to enable debug output for that
+workload only. The JAR path is always taken from the webhook configuration and cannot be set
+on the pod. To enable Java instrumentation cluster-wide, use `autotrace.java.enabled=true` in
+Helm values instead.
 
 ## Advanced Configuration
 
@@ -171,7 +231,7 @@ The `instana-autotrace` label is respected in metadata of Namespaces, as well as
 
 ### Minimize required ephemeral storage
 
-The webhook mutates the pod and adds the initContainer which pulls the image that has instrumentation files for all technologies that are supported (Node.js, .NET Core, Ruby, Python and NGINX) and copies all these files to the pod by the default. The files are stored in the emptyDir volume `instana-instrumentation-volume` under volume mount path `/opt/instana/instrumentation/`. As emptyDir volumes are stored on the local filesystem of the node, this is taking up pod's ephemeral storage usage. The total size of the instrumentation files is around 300MB:
+The webhook mutates the pod and adds the initContainer which pulls the image that has instrumentation files for all technologies that are supported (Node.js, .NET Core, Ruby, Python, NGINX, and Java) and copies all these files to the pod by the default. The files are stored in the emptyDir volume `instana-instrumentation-volume` under volume mount path `/opt/instana/instrumentation/`. As emptyDir volumes are stored on the local filesystem of the node, this is taking up pod's ephemeral storage usage. The total size of the instrumentation files is around 300MB:
 
 - libinstana_init 5M - required for all technologies
 - ibmmq 17M
@@ -181,10 +241,11 @@ The webhook mutates the pod and adds the initContainer which pulls the image tha
 - nginx 66M
 - nodejs 32M
 - python 20M
+- java 80K
 
-It's possible to limit the ephemeral storage required and specify webhook to only copy files for _some_ techonologies. This can be done globally for the whole cluster by specifying the helm chart flags or modifying the values file (`--set autotrace.instrumentation.manual.<technology>=true`, where technology can be `nodejs`, `netcore`, `python`, `ruby` or `nginx`).
+It's possible to limit the ephemeral storage required and specify webhook to only copy files for _some_ techonologies. This can be done globally for the whole cluster by specifying the helm chart flags or modifying the values file (`--set autotrace.instrumentation.manual.<technology>=true`, where technology can be `nodejs`, `netcore`, `python`, `ruby`, `nginx`, or `java`).
 
-Alternatively, it is possible to configure it per deployment or pod. For this approach, ensure to set the environment variable in the spec `INSTANA_INSTRUMENT_<technology>=true`, where where technology can be `NODEJS`, `NETCORE`, `PYTHON`, `RUBY` or `NGINX`.
+Alternatively, it is possible to configure it per deployment or pod. For this approach, ensure to set the environment variable in the spec `INSTANA_INSTRUMENT_<technology>=true`, where technology can be `NODEJS`, `NETCORE`, `PYTHON`, `RUBY`, `NGINX`, or `JAVA`.
 
 It is possible to specify more than one flag and include instrumentation files for two or more technologies. For more details on the environment variables or helm chart flags, please check the [helm values section](#helm-values).
 
@@ -268,6 +329,8 @@ respective environment variable below.
 |                          `.Values.autotrace.netcore.enabled`                          |                `INSTANA_AUTOTRACE_NETCORE`                 |                                                                                                            Whether to autotrace NET Core pods. Default `true`.                                                                                                             |
 |                           `.Values.autotrace.ruby.enabled`                            |                  `INSTANA_AUTOTRACE_RUBY`                  |                                                                                                              Whether to autotrace Ruby pods. Default `true`.                                                                                                               |
 |                          `.Values.autotrace.python.enabled`                           |                 `INSTANA_AUTOTRACE_PYTHON`                 |                                                                                                             Whether to autotrace Python pods. Default `true`.                                                                                                              |
+|                          `.Values.autotrace.java.enabled`                             |                 `INSTANA_AUTOTRACE_JAVA`                   |                                                                                                             Whether to autotrace Java pods cluster-wide via the Instana Java agent launcher. Default `false`. Requires `autotrace.libinstana_init.enabled=true` (the default). See [Java autotracing](#java-autotracing).                                                                                                              |
+|                          `.Values.autotrace.java.debug`                               |                 `INSTANA_AUTOTRACE_JAVA_DEBUG`         |                                                                                                             Enable bootstrap logging for the Java agent launcher. Default `false`. See [Debug mode](#debug-mode).                                                                                                              |
 |                       `.Values.autotrace.ingress_nginx.enabled`                       |             `INSTANA_AUTOTRACE_INGRESS_NGINX`              |                                                                                                         Whether to autotrace Ingress NGINX pods. Default `false`.                                                                                                          |
 |                   `.Values.autotrace.ingress_nginx.status_enabled`                    |          `INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS`          |                                                                                         When autotrace is enabled for Ingress NGINX, also add an status endpoint. Default `false`.                                                                                         |
 |                    `.Values.autotrace.ingress_nginx.status_allow`                     |       `INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS_ALLOW`       |                                                                                     IP address or CIDR mask of the agent to restrict the access to the status endpoint. Default `all`.                                                                                     |
@@ -282,6 +345,8 @@ respective environment variable below.
 |                      `.Values.autotrace.instrumentation.manual.nginx`                          |          `INSTANA_INSTRUMENT_NGINX`                               |                                                                                                         Flag to explicitely copy files for nginx. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.ruby`                          |          `INSTANA_INSTRUMENT_RUBY`                               |                                                                                                         Flag to explicitely copy files for Ruby applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.python`                          |          `INSTANA_INSTRUMENT_PYTHON`                               |                                                                                                         Flag to explicitely copy files for Python applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.
+|                      `.Values.autotrace.instrumentation.manual.java`                          |          `INSTANA_INSTRUMENT_JAVA`                               |                                                                                                         Flag to explicitly copy files for Java applications only (selective-copy mode). The files for other technologies will be omitted unless manually set with similar flags. Also writes the launcher path file required for Java agent activation. Can be set per-pod as a container env var. Helm chart flag sets the configuration globally for the cluster. See [Java autotracing](#java-autotracing).
+
 |                      NA                          |          `INSTANA_DISABLE_LD_PRELOAD`                               |                                                                                                         Set to `"true"` on an application container to disable `LD_PRELOAD` injection and skip copying `libinstana_init` into the instrumentation volume. All other instrumentation files and env vars are still injected.
 |                      `.Values.autotrace.instrumentation.imagePullCredentials.registry`                          |          NA                               |                                                                                                         The initContainer image can be pulled from private registry by customizing the deployment. This flag can be used to specify the registry for creating the pull secret.
 |                      `.Values.autotrace.instrumentation.imagePullCredentials.username`                          |          NA                               |                                                                                                         The initContainer image can be pulled from private registry by customizing the deployment. This flag can be used to specify the username for creating the pull secret.

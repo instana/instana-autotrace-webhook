@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.327.1
+
+- Update the javaagent-launcher to 1.0.1
+- Update the Instana Python package to 3.19.2
+
 ## 1.327.0
 
 - Update the .NET FF dependencies to 1.326.1

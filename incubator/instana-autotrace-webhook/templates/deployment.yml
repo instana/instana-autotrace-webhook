@@ -117,6 +117,8 @@ spec:
           value: {{ .Values.autotrace.instrumentation.manual.python | quote }}
         - name: INSTANA_INSTRUMENT_RUBY
           value: {{ .Values.autotrace.instrumentation.manual.ruby | quote }}
+        - name: INSTANA_INSTRUMENT_JAVA
+          value: {{ .Values.autotrace.instrumentation.manual.java | quote }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE
           value: {{ include "instrumentation.image" . }}
         - name: INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY
@@ -141,6 +143,12 @@ spec:
           value: {{ .Values.autotrace.ruby.enabled | quote }}
         - name: INSTANA_AUTOTRACE_PYTHON
           value: {{ .Values.autotrace.python.enabled | quote }}
+        - name: INSTANA_AUTOTRACE_JAVA
+          value: {{ .Values.autotrace.java.enabled | quote }}
+{{- if .Values.autotrace.java.debug }}
+        - name: INSTANA_AUTOTRACE_JAVA_DEBUG
+          value: "true"
+{{- end }}
         - name: INSTANA_AUTOTRACE_ACE
           value: {{ .Values.autotrace.ace.enabled | quote }}
         - name: INSTANA_AUTOTRACE_IBMMQ
