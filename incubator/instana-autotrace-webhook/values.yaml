@@ -1,7 +1,7 @@
 # Default values for instana-autotrace-webhook.
 
 global:
-  version: 1.327.1
+  version: 1.327.3
 rbac:
   enabled: true # Setting openshift.enabled=true implies rbac.enabled=true
   psp: # Ignored unless rbac.enabled == true
@@ -128,7 +128,7 @@ autotrace:
     # Defaults to "latest"; prepare-public-release.sh stamps a specific version from
     # instrumentation/src/netff/VERSION when publishing the public Helm chart.
     image: icr.io/instana/netff-instrumentation
-    tag: 1.326.1
+    tag: 1.327.1
     imagePullPolicy: IfNotPresent
   ruby:
     enabled: true
