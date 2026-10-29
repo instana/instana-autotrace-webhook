@@ -158,15 +158,28 @@ helm install --namespace instana-autotrace-webhook instana-autotrace-webhook \
 
 ## Configuration
 
-### Enable `ingress-nginx` tracing
+### Enable NGINX tracing
 
-To enable the automatic instrumentation of `ingress-nginx` objects in your kubernetes cluster, please set the value of `autotrace.ingress_nginx.enabled` to `true`:
+The webhook supports two NGINX flags with different scopes:
 
+- **`autotrace.nginx.enabled`** (default `true`) — instruments any pod running NGINX: copies `nginx/` files and activates the `watcher_nginx` daemon via `libinstana_init`. Does **not** touch ingress-nginx controller resources.
+- **`autotrace.ingress_nginx.enabled`** (default `false`) — does everything `nginx.enabled` does **plus** mutates the ingress-nginx controller ConfigMap (to inject tracing snippets) and Deployment. Enabling `ingress_nginx` is sufficient — you do not need to also set `nginx.enabled=true`.
+
+To instrument only general NGINX pods (default, already on):
+
+```bash
+--set autotrace.nginx.enabled=true
 ```
+
+To instrument the `ingress-nginx` controller specifically:
+
+```bash
 --set autotrace.ingress_nginx.enabled=true
 ```
 
-**Note:** Changes to already existing objects are only done whenever the objects are either modified or recreated.
+> `INSTANA_INSTRUMENT_INGRESS_NGINX` as an environment variable on a workload does NOT work like it does for other technologies. Enabling the ingress-nginx tracer requires mutating two separate Kubernetes objects: the controller Deployment (to copy tracer files via the init container) and its ConfigMap (to make NGINX load the tracer module). Kubernetes delivers each object to the webhook in its own admission request, so when the webhook is processing the ConfigMap it has no access to the Deployment — and therefore cannot read any env var set on the Deployment's containers. A workload-level flag could mutate the Deployment but leave the ConfigMap untouched, resulting in a tracer that is injected but never loaded. For this reason the ingress-nginx mutations are controlled **only** by the Helm values `autotrace.ingress_nginx.enabled`, or `autotrace.instrumentation.manual.ingress_nginx` in opt-in mode.
+
+**Note:** Changes to already existing objects are only applied when the objects are modified or recreated.
 
 ### Role-based Access Control
 
@@ -231,25 +244,45 @@ The `instana-autotrace` label is respected in metadata of Namespaces, as well as
 
 ### Minimize required ephemeral storage
 
-The webhook mutates the pod and adds the initContainer which pulls the image that has instrumentation files for all technologies that are supported (Node.js, .NET Core, Ruby, Python, NGINX, and Java) and copies all these files to the pod by the default. The files are stored in the emptyDir volume `instana-instrumentation-volume` under volume mount path `/opt/instana/instrumentation/`. As emptyDir volumes are stored on the local filesystem of the node, this is taking up pod's ephemeral storage usage. The total size of the instrumentation files is around 300MB:
+The webhook mutates the pod and adds the initContainer which pulls the image that has instrumentation files for all technologies that are supported (Node.js, .NET Core, Ruby, Python, NGINX, and Java) and copies only the files for the enabled technologies. The files are stored in the emptyDir volume `instana-instrumentation-volume` under volume mount path `/opt/instana/instrumentation/`. As emptyDir volumes are stored on the local filesystem of the node, this is taking up pod's ephemeral storage usage. The total size of the instrumentation files is around 350MB:
 
-- libinstana_init 5M - required for all technologies
+ - libinstana_init 7.5M - always copied, unless disabled with `autotrace.libinstana_init.enabled=false` or `INSTANA_DISABLE_LD_PRELOAD`. It is not affected by the per-technology flags below, and is a hard requirement for some technologies (see below)
 - ibmmq 17M
-- ruby 151M
+- ruby 89M
 - ibmace 9M
-- netcore 4M
-- nginx 66M
-- nodejs 32M
-- python 20M
-- java 80K
+- netcore 5.3M
+- nginx 80M
+- nodejs 54M
+- python 13M
+- java 100K
 
-It's possible to limit the ephemeral storage required and specify webhook to only copy files for _some_ techonologies. This can be done globally for the whole cluster by specifying the helm chart flags or modifying the values file (`--set autotrace.instrumentation.manual.<technology>=true`, where technology can be `nodejs`, `netcore`, `python`, `ruby`, `nginx`, or `java`).
+`libinstana_init` is a hard requirement for the following technologies:
 
-Alternatively, it is possible to configure it per deployment or pod. For this approach, ensure to set the environment variable in the spec `INSTANA_INSTRUMENT_<technology>=true`, where technology can be `NODEJS`, `NETCORE`, `PYTHON`, `RUBY`, `NGINX`, or `JAVA`.
+- .NET Core
+- NGINX
+- Java
 
-It is possible to specify more than one flag and include instrumentation files for two or more technologies. For more details on the environment variables or helm chart flags, please check the [helm values section](#helm-values).
+If `libinstana_init` is disabled (`autotrace.libinstana_init.enabled=false`, or `INSTANA_DISABLE_LD_PRELOAD=true` on a container of the pod), **tracing is not possible** for the above mentioned technologies, even if they are otherwise enabled. In that case the webhook does not copy their instrumentation files, and logs a warning that lists the affected technologies.
+
+Other technologies do not strictly need it, but using `libinstana_init` is still recommended:
+
+- **Python** falls back to `PYTHONPATH`, and **Ruby** falls back to `RUBYOPT`, so they are still traced. However, when `libinstana_init` is not in use, these variables are injected directly as Kubernetes pod-level env vars. Pod-level env vars take precedence over values baked into the container image (e.g. a `Dockerfile` `ENV` instruction), so any existing `PYTHONPATH` or `RUBYOPT` set in the image may be silently overridden. Values that the application sets at runtime are also not taken into account. With `libinstana_init` enabled, injection happens at the process level and appends to the effective runtime value, avoiding these issues.
+- **Node.js** is configured through `NODE_OPTIONS` and does not use `libinstana_init` at all.
+
+It's possible to limit the ephemeral storage required by making the webhook copy files for only _some_ technologies. There are two flags for this, and both ensure that the instrumentation files of the excluded technologies are **not copied** to the target workload (and that no environment variables for them are injected). They differ in how they select technologies:
+
+- **Opt-out:** you turn off the technologies you don't need, and everything else stays enabled.
+  - **Globally:** set the Helm value `autotrace.<technology>.enabled=false` (where technology can be `nodejs`, `netcore`, `python`, `ruby`, `java`, `nginx`, or `ingress_nginx`).
+  - **Per deployment or per pod:** not possible. Use opt-in instead, as a positive list of the technologies you want.
+- **Opt-in:** you list only the technologies you want, and all the others are not copied. As soon as any opt-in flag or environment variable is set, only the opted-in technologies are enabled. It's possible to include any number of opt-in flags.
+  - **Globally:** set the Helm value `autotrace.instrumentation.manual.<technology>=true` (where technology can be `nodejs`, `netcore`, `python`, `ruby`, `nginx`, `ingress_nginx`, or `java`).
+  - **Per deployment or per pod:** set the environment variable `INSTANA_INSTRUMENT_<technology>=true` in the spec (where technology can be `NODEJS`, `NETCORE`, `PYTHON`, `RUBY`, `NGINX`, or `JAVA`). `ingress_nginx` is not available per workload, see [Enable NGINX tracing](#enable-nginx-tracing).
+
+For more details on the environment variables or helm chart flags, please check the [helm values section](#helm-values).
 
 ### Disabling `LD_PRELOAD` and `libinstana_init`
+
+> **Not recommended in general.** Disable `libinstana_init` only for a workload that uses _exclusively_ Node.js, the one technology that does not use `libinstana_init` at all. For Python and Ruby, and for everything else, keep it enabled (see below).
 
 If your workload must not have `LD_PRELOAD` set (for example, because it conflicts with a custom shared library), you can opt out of both `LD_PRELOAD` injection and the `libinstana_init` file copy by setting the following environment variable on the application container:
 
@@ -263,7 +296,10 @@ When this variable is set to `"true"` on any application container in the pod:
 
 - `LD_PRELOAD` is **not** injected into any application container.
 - `libinstana_init` files are **not** copied into the instrumentation volume.
-- All other instrumentation files (Node.js, Python, Ruby, NGINX, etc.) and environment variables (`NODE_OPTIONS`, `PYTHONPATH`, `RUBYOPT`, etc.) are still injected as normal.
+- **.NET Core, NGINX and Java cannot be traced.** They are treated as disabled even if they are enabled by the Helm values or `INSTANA_INSTRUMENT_*`: their instrumentation files are **not** copied, and the webhook logs a warning that lists them.
+- Node.js (`NODE_OPTIONS`), Python (`PYTHONPATH`) and Ruby (`RUBYOPT`) are still instrumented, and their environment variables are injected as normal.
+
+Keeping `libinstana_init` is the safer choice for Python and Ruby. Without it, `PYTHONPATH` and `RUBYOPT` are injected directly as Kubernetes pod-level env vars. Pod-level env vars take precedence over values baked into the container image (for example a `Dockerfile` `ENV` instruction), so an existing `PYTHONPATH` or `RUBYOPT` set in the image may be silently overridden. Values that the application sets at runtime are also not taken into account. With `libinstana_init`, the injection happens at the process level and appends to the effective runtime value, which avoids these issues.
 
 ## Troubleshooting
 
@@ -323,16 +359,17 @@ respective environment variable below.
 |                  `.Values.autotrace.instrumentation.imagePullPolicy`                  | `INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_POLICY` |                                                                                                           Instrumentation image pull policy (Default IfNotPresent)                                                                                                           |
 |                  `.Values.autotrace.instrumentation.imagePullSecret`                  | `INSTANA_INSTRUMENTATION_INIT_CONTAINER_IMAGE_PULL_SECRET` |                                                                                                           Instrumentation image pull secret (If `.Values.autotrace.instrumentation.image` comes from a private regitry)                                                                                                           |
 |                              `.Values.autotrace.opt_in`                               |                 `INSTANA_AUTOTRACE_OPT_IN`                 |                       When set to "true", only those pods with the label `instana-autotrace=true`, are going to be autotraced. By default is `false`, and in this case all pods will be autotraced except those the label `instana-autotrace=false`                        |
-|                          `.Values.autotrace.nodejs.enabled`                           |                 `INSTANA_AUTOTRACE_NODEJS`                 |                                                                                                             Whether to autotrace Node.js pods. Default `true`.                                                                                                              |
+|                          `.Values.autotrace.nodejs.enabled`                           |                 `INSTANA_AUTOTRACE_NODEJS`                 |                                                                                                             Whether to autotrace Node.js pods. Default `true`. When `false`, the Node.js files are not copied to the instrumentation volume.                                                                                                              |
 |                            `.Values.autotrace.nodejs.application_type`                |               `INSTANA_AUTOTRACE_NODEJS_APPLICATION_TYPE`               |                                                                                                        How the Customers Node.js app loads its modules. The default is `commonjs`.  If you opt for ESM loading and your Node.js version is 18.19.0 or higher, select `module_v2`. For Node.js versions lower than 18.19.0, use `module_v1` (**deprecated** - it is not supported in Node.js 18.19.0 and above, and will be removed in future releases).                                                                                                        |
 |                            `.Values.autotrace.nodejs.esm`                             |               `INSTANA_AUTOTRACE_NODEJS_ESM`               |                                                                                                        This variable is deprecated and will be removed in future updates. It determines whether the Node.js application is utilizing ESM or not. This setting is relevant only for Node.js versions below 18.19.0, with the default being `false`. We recommend using `INSTANA_AUTOTRACE_NODEJS_APPLICATION_TYPE` instead.                                                                                                        |
-|                          `.Values.autotrace.netcore.enabled`                          |                `INSTANA_AUTOTRACE_NETCORE`                 |                                                                                                            Whether to autotrace NET Core pods. Default `true`.                                                                                                             |
-|                           `.Values.autotrace.ruby.enabled`                            |                  `INSTANA_AUTOTRACE_RUBY`                  |                                                                                                              Whether to autotrace Ruby pods. Default `true`.                                                                                                               |
-|                          `.Values.autotrace.python.enabled`                           |                 `INSTANA_AUTOTRACE_PYTHON`                 |                                                                                                             Whether to autotrace Python pods. Default `true`.                                                                                                              |
-|                          `.Values.autotrace.java.enabled`                             |                 `INSTANA_AUTOTRACE_JAVA`                   |                                                                                                             Whether to autotrace Java pods cluster-wide via the Instana Java agent launcher. Default `false`. Requires `autotrace.libinstana_init.enabled=true` (the default). See [Java autotracing](#java-autotracing).                                                                                                              |
+|                          `.Values.autotrace.netcore.enabled`                          |                `INSTANA_AUTOTRACE_NETCORE`                 |                                                                                                            Whether to autotrace NET Core pods. Default `true`. When `false`, the .NET Core files are not copied to the instrumentation volume.                                                                                                             |
+|                           `.Values.autotrace.ruby.enabled`                            |                  `INSTANA_AUTOTRACE_RUBY`                  |                                                                                                              Whether to autotrace Ruby pods. Default `true`. When `false`, the Ruby files are not copied to the instrumentation volume.                                                                                                               |
+|                          `.Values.autotrace.python.enabled`                           |                 `INSTANA_AUTOTRACE_PYTHON`                 |                                                                                                             Whether to autotrace Python pods. Default `true`. When `false`, the Python files are not copied to the instrumentation volume.                                                                                                              |
+|                          `.Values.autotrace.java.enabled`                             |                 `INSTANA_AUTOTRACE_JAVA`                   |                                                                                                             Whether to autotrace Java pods cluster-wide via the Instana Java agent launcher. Default `false`. When `false`, the Java files are not copied to the instrumentation volume. Requires `autotrace.libinstana_init.enabled=true` (the default). See [Java autotracing](#java-autotracing).                                                                                                              |
 |                          `.Values.autotrace.java.debug`                               |                 `INSTANA_AUTOTRACE_JAVA_DEBUG`         |                                                                                                             Enable bootstrap logging for the Java agent launcher. Default `false`. See [Debug mode](#debug-mode).                                                                                                              |
-|                       `.Values.autotrace.ingress_nginx.enabled`                       |             `INSTANA_AUTOTRACE_INGRESS_NGINX`              |                                                                                                         Whether to autotrace Ingress NGINX pods. Default `false`.                                                                                                          |
-|                   `.Values.autotrace.ingress_nginx.status_enabled`                    |          `INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS`          |                                                                                         When autotrace is enabled for Ingress NGINX, also add an status endpoint. Default `false`.                                                                                         |
+|                       `.Values.autotrace.nginx.enabled`                               |             `INSTANA_AUTOTRACE_NGINX`                      | Enable NGINX instrumentation for any pod (copies `nginx/` files). Default `true`. Does **not** mutate ingress-nginx controller resources. |
+|                       `.Values.autotrace.ingress_nginx.enabled`                       |             `INSTANA_AUTOTRACE_INGRESS_NGINX`              | Enable NGINX instrumentation **and** mutate ingress-nginx controller ConfigMaps and Deployments. Default `false`. Implies `nginx` — enabling this alone is sufficient. |
+|                   `.Values.autotrace.ingress_nginx.status_enabled`                    |          `INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS`          |                                                                                         When ingress-nginx autotracing is enabled, also add a status endpoint. Default `false`.                                                                                         |
 |                    `.Values.autotrace.ingress_nginx.status_allow`                     |       `INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS_ALLOW`       |                                                                                     IP address or CIDR mask of the agent to restrict the access to the status endpoint. Default `all`.                                                                                     |
 |                      `.Values.autotrace.libinstana_init.enabled`                      |          `INSTANA_AUTOTRACE_USE_LIB_INSTANA_INIT`          |                                                                                                          Whether to use libinstana_init library. Default `true`.                                                                                                           |
 |                      `.Values.autotrace.initContainer.memoryLimit`                    |          `INSTANA_AUTOTRACE_INIT_MEMORY_LIMIT`             |                                                                                                          Memory limit of the init container. Defaults to `256Mi`.                                                                                                          |
@@ -342,7 +379,8 @@ respective environment variable below.
 |                      `.Values.awseksfargate.instanaAgentKey`                          |          `INSTANA_AGENT_KEY`                               |                                                                                                         Specifys the agent key for the in-process tracer, which is used for authentication on the endpoint URL.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.nodejs`                          |          `INSTANA_INSTRUMENT_NODEJS`                               |                                                                                                         Flag to explicitely copy files for NodeJS applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.netcore`                          |          `INSTANA_INSTRUMENT_NETCORE`                               |                                                                                                         Flag to explicitely copy files for .NET core applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
-|                      `.Values.autotrace.instrumentation.manual.nginx`                          |          `INSTANA_INSTRUMENT_NGINX`                               |                                                                                                         Flag to explicitely copy files for nginx. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
+|                      `.Values.autotrace.instrumentation.manual.nginx`                          |          `INSTANA_INSTRUMENT_NGINX`                               |                                                                                                         Flag to explicitly copy files for NGINX applications. Does **not** trigger ingress-nginx controller mutations. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
+|                      `.Values.autotrace.instrumentation.manual.ingress_nginx`                  |          `INSTANA_INSTRUMENT_INGRESS_NGINX`                        |                                                                                                         Flag to explicitly copy files for NGINX applications **and** mutate ingress-nginx controller resources. Implies `manual.nginx`. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.ruby`                          |          `INSTANA_INSTRUMENT_RUBY`                               |                                                                                                         Flag to explicitely copy files for Ruby applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.                                                            |
 |                      `.Values.autotrace.instrumentation.manual.python`                          |          `INSTANA_INSTRUMENT_PYTHON`                               |                                                                                                         Flag to explicitely copy files for Python applications. The files for other technologies will be omitted unless manually set with similar flags for other technologies. Helm chart flag sets the configuration globally for the cluster.
 |                      `.Values.autotrace.instrumentation.manual.java`                          |          `INSTANA_INSTRUMENT_JAVA`                               |                                                                                                         Flag to explicitly copy files for Java applications only (selective-copy mode). The files for other technologies will be omitted unless manually set with similar flags. Also writes the launcher path file required for Java agent activation. Can be set per-pod as a container env var. Helm chart flag sets the configuration globally for the cluster. See [Java autotracing](#java-autotracing).

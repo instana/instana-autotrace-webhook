@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.328.1
+
+- Update the .NET FF dependencies to 1.328.2
+- Update the .NET Core dependencies to 1.328.2
+
 ## 1.328.0
 
 - Update the @instana/collector Node.js package to 6.10.0

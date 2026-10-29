@@ -113,6 +113,8 @@ spec:
           value: {{ .Values.autotrace.instrumentation.manual.netff | quote }}
         - name: INSTANA_INSTRUMENT_NGINX
           value: {{ .Values.autotrace.instrumentation.manual.nginx | quote }}
+        - name: INSTANA_INSTRUMENT_INGRESS_NGINX
+          value: {{ .Values.autotrace.instrumentation.manual.ingress_nginx | quote }}
         - name: INSTANA_INSTRUMENT_PYTHON
           value: {{ .Values.autotrace.instrumentation.manual.python | quote }}
         - name: INSTANA_INSTRUMENT_RUBY
@@ -157,6 +159,8 @@ spec:
           value: {{ .Values.autotrace.nodejs.esm | quote }}
         - name: INSTANA_AUTOTRACE_NODEJS_APPLICATION_TYPE
           value: {{ .Values.autotrace.nodejs.application_type | quote }}
+        - name: INSTANA_AUTOTRACE_NGINX
+          value: {{ .Values.autotrace.nginx.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX
           value: {{ .Values.autotrace.ingress_nginx.enabled | quote }}
         - name: INSTANA_AUTOTRACE_INGRESS_NGINX_STATUS
