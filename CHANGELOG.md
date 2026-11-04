@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.329.0
+
+- Update the instana Gem to 2.11.0
+
 ## 1.328.1
 
 - Update the .NET FF dependencies to 1.328.2
