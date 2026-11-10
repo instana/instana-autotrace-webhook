@@ -244,17 +244,32 @@ The `instana-autotrace` label is respected in metadata of Namespaces, as well as
 
 ### Minimize required ephemeral storage
 
-The webhook mutates the pod and adds the initContainer which pulls the image that has instrumentation files for all technologies that are supported (Node.js, .NET Core, Ruby, Python, NGINX, and Java) and copies only the files for the enabled technologies. The files are stored in the emptyDir volume `instana-instrumentation-volume` under volume mount path `/opt/instana/instrumentation/`. As emptyDir volumes are stored on the local filesystem of the node, this is taking up pod's ephemeral storage usage. The total size of the instrumentation files is around 350MB:
+The webhook mutates the pod and adds the initContainer which pulls the image that has instrumentation files for all technologies that are supported (Node.js, .NET Core, Ruby, Python, NGINX, and Java) and copies only the files for the enabled technologies. The files are stored in the emptyDir volume `instana-instrumentation-volume` under volume mount path `/opt/instana/instrumentation/`. As emptyDir volumes are stored on the local filesystem of the node, this is taking up pod's ephemeral storage usage.
 
- - libinstana_init 7.5M - always copied, unless disabled with `autotrace.libinstana_init.enabled=false` or `INSTANA_DISABLE_LD_PRELOAD`. It is not affected by the per-technology flags below, and is a hard requirement for some technologies (see below)
-- ibmmq 17M
-- ruby 89M
-- ibmace 9M
-- netcore 5.3M
-- nginx 80M
-- nodejs 54M
-- python 13M
-- java 100K
+The instrumentation image is multi-architecture and the files it ships depend on the architecture of the node, so the required storage differs per architecture. The following table shows the size of each directory when all technologies are enabled (image version `1.329.0`, released on 4th November, 2026):
+
+| Directory         | amd64      | arm64      | s390x      |
+|-------------------|------------|------------|------------|
+| `libinstana_init` | 8.0M       | 7.5M       | 8.1M       |
+| `ruby`            | 87.6M      | 88.4M      | 109.2M     |
+| `netcore`         | 7.1M       | 5.3M       | -          |
+| `nginx`           | 183.3M     | 101.6M     | 119.6M     |
+| `nodejs`          | 55.5M      | 55.6M      | 55.0M      |
+| `python`          | 12.2M      | 12.6M      | 12.0M      |
+| `java`            | 0.1M       | 0.1M       | -          |
+| **Total**         | **354M**   | **271M**   | **304M**   |
+
+Notes:
+
+- `libinstana_init` is always copied, unless disabled with `autotrace.libinstana_init.enabled=false` or `INSTANA_DISABLE_LD_PRELOAD`. It is not affected by the per-technology flags below, and is a hard requirement for some technologies (see below).
+- Sizes are disk usage (rounded up to 4 KiB blocks, as reported by `du`) and could grow slightly as new versions of the instrumentation are released. Leave some headroom when setting ephemeral storage limits.
+
+On IBM ACE and IBM MQ pods, the init container additionally copies tracing files into a separate `emptyDir` volume, mounted at `/opt/ACEOpenTracing/` (IBM ACE) or `/opt/MQOpenTracing/` (IBM MQ). These files are not part of the `instana-instrumentation-volume` above, but they also count towards the pod's ephemeral storage. They are not available on arm64.
+
+| Directory | amd64  | arm64 | s390x  |
+|-----------|--------|-------|--------|
+| `ibmace`  | 17.0M  | -     | 18.1M  |
+| `ibmmq`   | 45.9M  | -     | 41.1M  |
 
 `libinstana_init` is a hard requirement for the following technologies:
 
